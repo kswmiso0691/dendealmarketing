@@ -1032,10 +1032,14 @@
         <p>소장님이 직접 전달하시는 것이 핵심입니다.<br>기공소에서 제공하는 서비스로 안내되므로, 거래처와의 <strong>신뢰와 유대감</strong>이 더욱 강화됩니다.</p>
       </div>
 
-      <button type="button" class="modal-close" id="guideCloseBtn" style="margin-top:20px;">닫기</button>
+      <div class="edit-btn-group" style="margin-top:20px;">
+        <button type="button" class="modal-close" id="guideCloseBtn">닫기</button>
+        <button type="button" class="edit-save-btn" id="guideDownloadBtn">이미지 다운로드</button>
+      </div>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -1431,6 +1435,36 @@
 
     document.getElementById('guideModal').addEventListener('click', function(e) {
       if (e.target === this) this.classList.remove('show');
+    });
+
+    document.getElementById('guideDownloadBtn').addEventListener('click', function() {
+      var btn = this;
+      var closeBtn = document.getElementById('guideCloseBtn');
+      var btnGroup = btn.parentElement;
+      btnGroup.style.display = 'none';
+
+      var target = document.querySelector('#guideModal .guide-modal');
+      btn.textContent = '생성 중...';
+      btn.disabled = true;
+
+      html2canvas(target, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true
+      }).then(function(canvas) {
+        btnGroup.style.display = '';
+        var link = document.createElement('a');
+        link.download = '진행안내.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = '이미지 다운로드';
+        btn.disabled = false;
+      }).catch(function() {
+        btnGroup.style.display = '';
+        alert('이미지 생성에 실패했습니다.');
+        btn.textContent = '이미지 다운로드';
+        btn.disabled = false;
+      });
     });
   </script>
 
