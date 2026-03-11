@@ -759,9 +759,60 @@
       .submit-result .summary { padding: 12px 14px; }
       .submit-result .summary-row { font-size: 13px; }
     }
+
+    /* ===== 다운로드 플로팅 버튼 ===== */
+    .download-float {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(46,125,246,0.35);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .download-float:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(46,125,246,0.45);
+    }
+
+    .download-float svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .download-float {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 18px;
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- 다운로드 플로팅 버튼 -->
+  <a href="admin.html" download="관리자페이지.html" class="download-float">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    관리자 웹 다운로드
+  </a>
 
   <!-- Hero -->
   <section class="hero">
