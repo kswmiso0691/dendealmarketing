@@ -1090,6 +1090,7 @@
     var LAB_ID = params.get('id');
 
     // Firestore에서 기공소 정보 불러오기
+    var pageContent = null;
     if (LAB_ID) {
       try {
         var labDoc = await getDoc(doc(db, 'labs', LAB_ID));
@@ -1097,6 +1098,7 @@
           var labData = labDoc.data();
           LAB_NAME = labData.name || LAB_NAME;
           DIRECTOR_NAME = labData.director || DIRECTOR_NAME;
+          pageContent = labData.content || null;
         }
       } catch(e) {}
     } else {
@@ -1119,6 +1121,48 @@
       document.title = LAB_NAME + ' - 특별 이벤트';
     }
     applyLabInfo();
+
+    // ===== 상세페이지 커스텀 콘텐츠 적용 =====
+    if (pageContent) {
+      var c = pageContent;
+      // 상단
+      if (c.subtitle) document.querySelector('.hero h2').textContent = c.subtitle;
+      if (c.desc) {
+        document.querySelector('.hero-desc').innerHTML = c.desc.replace(/\n/g, '<br>');
+      }
+      // 감사 인사
+      if (c.thankTitle) document.querySelector('.thank-you h3').innerHTML = c.thankTitle.replace(/\n/g, '<br>');
+      if (c.thankDesc) {
+        var tp = document.querySelector('.thank-you p');
+        var labSpan = tp.querySelector('[data-lab-name]');
+        var thankText = c.thankDesc;
+        if (labSpan) {
+          tp.innerHTML = '<span data-lab-name>' + LAB_NAME + '</span>가 ' + thankText;
+        } else {
+          tp.textContent = thankText;
+        }
+      }
+      // 혜택 카드
+      var cards = document.querySelectorAll('.event-card');
+      var benefits = [
+        { t: c.b1Title, tag: c.b1Tag, d: c.b1Desc },
+        { t: c.b2Title, tag: c.b2Tag, d: c.b2Desc },
+        { t: c.b3Title, tag: c.b3Tag, d: c.b3Desc },
+        { t: c.b4Title, tag: c.b4Tag, d: c.b4Desc }
+      ];
+      cards.forEach(function(card, i) {
+        if (benefits[i]) {
+          if (benefits[i].t) card.querySelector('h3').textContent = benefits[i].t;
+          if (benefits[i].tag) card.querySelector('.highlight').textContent = benefits[i].tag;
+          if (benefits[i].d) card.querySelector('p').textContent = benefits[i].d;
+        }
+      });
+      // CTA
+      if (c.cta) {
+        var ctaH2 = document.querySelector('.cta h2');
+        ctaH2.innerHTML = c.cta + '<br><span data-lab-name>' + LAB_NAME + '</span>';
+      }
+    }
 
     // ===== 달력 =====
     var today = new Date();
