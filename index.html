@@ -1068,7 +1068,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCSvI4BnsestFaf-dWOUKjOUQ3bNCkHEWA",
@@ -1085,20 +1085,40 @@
 
     // ===== 기공소 설정 =====
     var params = new URLSearchParams(window.location.search);
-    var LAB_NAME = params.get('lab') || '와이티플러스기공소';
-    var DIRECTOR_NAME = params.get('director') || '정용태 소장';
+    var LAB_NAME = '와이티플러스기공소';
+    var DIRECTOR_NAME = '정용태 소장';
+    var LAB_ID = params.get('id');
 
-    document.querySelectorAll('[data-lab-name]').forEach(function(el) {
-      el.textContent = LAB_NAME;
-    });
-    document.querySelectorAll('[data-lab-short]').forEach(function(el) {
-      var short = LAB_NAME.replace('기공소','');
-      el.innerHTML = '<span>' + short + '</span> 기공소';
-    });
-    document.querySelectorAll('[data-director]').forEach(function(el) {
-      el.textContent = DIRECTOR_NAME + ' 올림';
-    });
-    document.title = LAB_NAME + ' - 특별 이벤트';
+    // Firestore에서 기공소 정보 불러오기
+    if (LAB_ID) {
+      try {
+        var labDoc = await getDoc(doc(db, 'labs', LAB_ID));
+        if (labDoc.exists()) {
+          var labData = labDoc.data();
+          LAB_NAME = labData.name || LAB_NAME;
+          DIRECTOR_NAME = labData.director || DIRECTOR_NAME;
+        }
+      } catch(e) {}
+    } else {
+      // 하위호환: 기존 ?lab=&director= 방식도 지원
+      LAB_NAME = params.get('lab') || LAB_NAME;
+      DIRECTOR_NAME = params.get('director') || DIRECTOR_NAME;
+    }
+
+    function applyLabInfo() {
+      document.querySelectorAll('[data-lab-name]').forEach(function(el) {
+        el.textContent = LAB_NAME;
+      });
+      document.querySelectorAll('[data-lab-short]').forEach(function(el) {
+        var short = LAB_NAME.replace('기공소','');
+        el.innerHTML = '<span>' + short + '</span> 기공소';
+      });
+      document.querySelectorAll('[data-director]').forEach(function(el) {
+        el.textContent = DIRECTOR_NAME + ' 올림';
+      });
+      document.title = LAB_NAME + ' - 특별 이벤트';
+    }
+    applyLabInfo();
 
     // ===== 달력 =====
     var today = new Date();

@@ -595,7 +595,7 @@
 <body>
 
   <header class="admin-header">
-    <h1><span>YT+</span> 예약 관리 시스템</h1>
+    <h1>예약 관리 시스템</h1>
     <div class="badge">ADMIN</div>
   </header>
 
@@ -764,9 +764,7 @@
 
     function getLabPageUrl(lab) {
       var base = window.location.href.replace(/admin\.html.*$/, 'index.html');
-      var url = base + '?lab=' + encodeURIComponent(lab.name);
-      if (lab.director) url += '&director=' + encodeURIComponent(lab.director);
-      return url;
+      return base + '?id=' + lab._id;
     }
 
     // ===== 모달 =====
@@ -814,7 +812,8 @@
       if (exists) { alert('이미 등록된 기공소입니다.'); return; }
 
       var newLab = { name: name, director: director };
-      await addDoc(collection(db, 'labs'), newLab);
+      var docRef = await addDoc(collection(db, 'labs'), newLab);
+      newLab._id = docRef.id;
 
       nameInput.value = '';
       dirInput.value = '';
