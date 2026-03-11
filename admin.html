@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 - 예약 관리</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f5f5f2;
+      color: #2c2c2c;
+      min-height: 100vh;
+    }
+
+    /* ===== Header ===== */
+    .admin-header {
+      background: #0f1a28;
+      color: #fff;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-header h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .admin-header h1 span { color: #8ec5e8; }
+
+    .admin-header .badge {
+      font-size: 10px;
+      background: rgba(255,255,255,0.12);
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 1px;
+      color: #8a9ab5;
+    }
+
+    /* ===== Layout ===== */
+    .admin-body {
+      display: flex;
+      min-height: calc(100vh - 62px);
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 300px;
+      background: #fff;
+      border-right: 1px solid #e8e8e4;
+      padding: 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-section {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .sidebar-section h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* 기공소 추가 폼 */
+    .add-lab-row {
+      margin-bottom: 8px;
+    }
+
+    .add-lab-row label {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .add-lab-row input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Noto Sans KR', sans-serif;
+      outline: none;
+    }
+
+    .add-lab-row input:focus { border-color: #1a3350; }
+
+    .add-lab-btn {
+      width: 100%;
+      padding: 10px;
+      background: #1a3350;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .add-lab-btn:hover { background: #243f5c; }
+
+    /* 기공소 목록 */
+    .lab-list-section {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .lab-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .lab-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin: 0 8px 2px;
+    }
+
+    .lab-item:hover { background: #f5f5f2; }
+
+    .lab-item.active { background: #1a3350; color: #fff; }
+
+    .lab-item .lab-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .lab-item .lab-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #e8e8e4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .lab-item.active .lab-icon { background: rgba(255,255,255,0.15); }
+
+    .lab-item .lab-detail {
+      min-width: 0;
+    }
+
+    .lab-item .lab-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .lab-item .lab-director {
+      font-size: 10px;
+      color: #aaa;
+      display: block;
+    }
+
+    .lab-item.active .lab-director { color: rgba(255,255,255,0.6); }
+
+    .lab-item .lab-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .lab-item .lab-count {
+      font-size: 11px;
+      font-weight: 600;
+      background: #e8e8e4;
+      color: #666;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .lab-item.active .lab-count { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .lab-item-all { margin-bottom: 6px; }
+
+    .lab-actions {
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .lab-item:hover .lab-actions { opacity: 1; }
+
+    .lab-action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      color: #bbb;
+      padding: 2px 4px;
+      border-radius: 3px;
+      line-height: 1;
+    }
+
+    .lab-action-btn:hover { color: #1a3350; }
+    .lab-action-btn.del:hover { color: #c0392b; }
+    .lab-item.active .lab-action-btn { color: rgba(255,255,255,0.4); }
+    .lab-item.active .lab-action-btn:hover { color: #fff; }
+    .lab-item.active .lab-action-btn.del:hover { color: #fca5a5; }
+
+    /* 링크 모달 */
+    .link-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .link-modal-overlay.show { display: flex; }
+
+    .link-modal {
+      background: #fff;
+      border-radius: 14px;
+      padding: 32px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .link-modal h3 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 18px;
+      color: #1a3350;
+      margin-bottom: 6px;
+    }
+
+    .link-modal .modal-sub {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .link-modal .link-label {
+      font-size: 11px;
+      color: #888;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .link-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .link-box input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #1a3350;
+      background: #f8f8f6;
+      outline: none;
+    }
+
+    .link-box button {
+      padding: 10px 16px;
+      background: #1a3350;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .link-box button:hover { background: #243f5c; }
+    .link-box button.copied { background: #2d6654; }
+
+    .link-modal .modal-info {
+      background: #f8f8f6;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .link-modal .modal-info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 3px 0;
+    }
+
+    .link-modal .modal-info-row .lbl { color: #999; }
+    .link-modal .modal-info-row .val { color: #1a3350; font-weight: 600; }
+
+    .modal-close {
+      width: 100%;
+      padding: 12px;
+      background: #f0f0ec;
+      color: #666;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .modal-close:hover { background: #e8e8e4; }
+
+    /* ===== Main ===== */
+    .main {
+      flex: 1;
+      padding: 28px;
+      overflow-y: auto;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e8e8e4;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .stat-card .stat-value {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a3350;
+    }
+
+    .stat-card .stat-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: #888;
+      margin-left: 2px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a3350;
+    }
+
+    .filter-btns { display: flex; gap: 4px; }
+
+    .filter-btn {
+      padding: 5px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 12px;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      color: #666;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { border-color: #1a3350; color: #1a3350; }
+    .filter-btn.active { background: #1a3350; color: #fff; border-color: #1a3350; }
+
+    .search-input {
+      padding: 8px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Noto Sans KR', sans-serif;
+      width: 200px;
+      outline: none;
+    }
+
+    .search-input:focus { border-color: #1a3350; }
+
+    /* 테이블 */
+    .table-wrap {
+      background: #fff;
+      border: 1px solid #e8e8e4;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      background: #f8f8f6;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-align: left;
+      border-bottom: 1px solid #e8e8e4;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid #f0f0ec;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #fafaf8; }
+
+    .td-clinic { font-weight: 600; color: #1a3350; }
+    .td-lab { color: #666; }
+    .td-date, .td-time { white-space: nowrap; }
+
+    .time-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .time-badge.morning { background: #fef3e2; color: #c27d0e; }
+    .time-badge.lunch { background: #e6f3ef; color: #2d6654; }
+    .time-badge.afternoon { background: #e9f0f7; color: #2d5a84; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .status-badge.waiting { background: #fef3e2; color: #c27d0e; }
+    .status-badge.confirmed { background: #e6f3ef; color: #2d6654; }
+    .status-badge.completed { background: #e8e8e4; color: #666; }
+    .status-badge.cancelled { background: #fde8e8; color: #c0392b; }
+
+    .td-actions { white-space: nowrap; }
+
+    .action-btn {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      color: #666;
+      font-family: 'Noto Sans KR', sans-serif;
+      margin-right: 4px;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover { border-color: #1a3350; color: #1a3350; }
+    .action-btn.delete:hover { border-color: #c0392b; color: #c0392b; }
+
+    .td-created { font-size: 11px; color: #aaa; white-space: nowrap; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #bbb;
+    }
+
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-state p { font-size: 14px; font-weight: 300; }
+
+    /* ===== 반응형 ===== */
+    @media (max-width: 1024px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .admin-body { flex-direction: column; }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e8e8e4;
+      }
+
+      .sidebar-section { padding: 16px; }
+
+      .lab-list-section { max-height: 200px; }
+
+      .lab-list {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding: 0 8px 8px;
+      }
+
+      .lab-item {
+        white-space: nowrap;
+        padding: 8px 14px;
+        flex-shrink: 0;
+        margin: 0;
+      }
+
+      .lab-item .lab-icon { display: none; }
+      .lab-item .lab-director { display: none; }
+      .lab-actions { display: none !important; }
+
+      .main { padding: 20px 16px; }
+      .stats { gap: 10px; }
+      .stat-card { padding: 14px; }
+      .stat-card .stat-value { font-size: 22px; }
+      .toolbar { flex-direction: column; align-items: flex-start; }
+      .search-input { width: 100%; }
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 640px; }
+      .admin-header h1 { font-size: 15px; }
+
+      .link-modal { padding: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat-card .stat-value { font-size: 20px; }
+      .filter-btns { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="admin-header">
+    <h1><span>YT+</span> 예약 관리 시스템</h1>
+    <div class="badge">ADMIN</div>
+  </header>
+
+  <div class="admin-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- 기공소 추가 -->
+      <div class="sidebar-section">
+        <h3>기공소 추가</h3>
+        <div class="add-lab-row">
+          <label>기공소명</label>
+          <input type="text" id="newLabName" placeholder="예) 와이티플러스기공소">
+        </div>
+        <div class="add-lab-row">
+          <label>소장명</label>
+          <input type="text" id="newDirector" placeholder="예) 정용태 소장">
+        </div>
+        <button type="button" class="add-lab-btn" id="addLabBtn">기공소 추가</button>
+      </div>
+
+      <!-- 기공소 목록 -->
+      <div class="sidebar-section lab-list-section">
+        <h3>기공소 목록</h3>
+        <ul class="lab-list" id="labList"></ul>
+      </div>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">전체 예약</div>
+          <div class="stat-value" id="statTotal">0<span class="stat-unit">건</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">대기 중</div>
+          <div class="stat-value" id="statWaiting">0<span class="stat-unit">건</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">확정</div>
+          <div class="stat-value" id="statConfirmed">0<span class="stat-unit">건</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">완료</div>
+          <div class="stat-value" id="statCompleted">0<span class="stat-unit">건</span></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h2 id="listTitle">예약 목록</h2>
+          <div class="filter-btns">
+            <button class="filter-btn active" data-status="all">전체</button>
+            <button class="filter-btn" data-status="대기">대기</button>
+            <button class="filter-btn" data-status="확정">확정</button>
+            <button class="filter-btn" data-status="완료">완료</button>
+            <button class="filter-btn" data-status="취소">취소</button>
+          </div>
+        </div>
+        <input type="text" class="search-input" id="searchInput" placeholder="치과명 검색...">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>치과명</th>
+              <th>기공소</th>
+              <th>방문 날짜</th>
+              <th>시간</th>
+              <th>상태</th>
+              <th>신청일</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <div class="empty-icon">&#x1F4CB;</div>
+          <p>예약 내역이 없습니다.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 링크 모달 -->
+  <div class="link-modal-overlay" id="linkModal">
+    <div class="link-modal">
+      <h3 id="modalLabName">기공소 추가 완료</h3>
+      <p class="modal-sub">아래 링크를 치과에 보내시면 해당 기공소 전용 예약 페이지가 열립니다.</p>
+
+      <div class="link-modal .modal-info" id="modalInfo">
+        <div class="modal-info" style="margin-bottom:16px;">
+          <div class="modal-info-row">
+            <span class="lbl">기공소명</span>
+            <span class="val" id="modalInfoLab"></span>
+          </div>
+          <div class="modal-info-row">
+            <span class="lbl">소장명</span>
+            <span class="val" id="modalInfoDir"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="link-label">예약 페이지 링크</div>
+      <div class="link-box">
+        <input type="text" id="modalLink" readonly>
+        <button type="button" id="copyLinkBtn">복사</button>
+      </div>
+
+      <button type="button" class="modal-close" id="modalCloseBtn">닫기</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var currentLab = 'all';
+      var currentStatus = 'all';
+      var searchQuery = '';
+
+      // ===== 데이터 =====
+      function getReservations() {
+        return JSON.parse(localStorage.getItem('yt_reservations') || '[]');
+      }
+      function saveReservations(data) {
+        localStorage.setItem('yt_reservations', JSON.stringify(data));
+      }
+      // labs는 이제 객체 배열: [{name, director}]
+      function getLabs() {
+        var raw = localStorage.getItem('yt_labs');
+        if (!raw) return [];
+        var parsed = JSON.parse(raw);
+        // 하위호환: 문자열 배열이면 객체로 변환
+        if (parsed.length > 0 && typeof parsed[0] === 'string') {
+          parsed = parsed.map(function(name) {
+            return { name: name, director: '' };
+          });
+          saveLabs(parsed);
+        }
+        return parsed;
+      }
+      function saveLabs(data) {
+        localStorage.setItem('yt_labs', JSON.stringify(data));
+      }
+
+      function getLabPageUrl(lab) {
+        var base = window.location.href.replace(/admin\.html.*$/, 'index.html');
+        var url = base + '?lab=' + encodeURIComponent(lab.name);
+        if (lab.director) url += '&director=' + encodeURIComponent(lab.director);
+        return url;
+      }
+
+      // ===== 모달 =====
+      function showLinkModal(lab) {
+        var url = getLabPageUrl(lab);
+        document.getElementById('modalLabName').textContent = lab.name + ' 등록 완료';
+        document.getElementById('modalInfoLab').textContent = lab.name;
+        document.getElementById('modalInfoDir').textContent = lab.director || '-';
+        document.getElementById('modalLink').value = url;
+        document.getElementById('copyLinkBtn').textContent = '복사';
+        document.getElementById('copyLinkBtn').classList.remove('copied');
+        document.getElementById('linkModal').classList.add('show');
+      }
+
+      document.getElementById('modalCloseBtn').addEventListener('click', function() {
+        document.getElementById('linkModal').classList.remove('show');
+      });
+
+      document.getElementById('linkModal').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('show');
+      });
+
+      document.getElementById('copyLinkBtn').addEventListener('click', function() {
+        var input = document.getElementById('modalLink');
+        input.select();
+        document.execCommand('copy');
+        this.textContent = '복사됨';
+        this.classList.add('copied');
+        setTimeout(function() {
+          document.getElementById('copyLinkBtn').textContent = '복사';
+          document.getElementById('copyLinkBtn').classList.remove('copied');
+        }, 2000);
+      });
+
+      // ===== 기공소 추가 =====
+      document.getElementById('addLabBtn').addEventListener('click', function() {
+        var nameInput = document.getElementById('newLabName');
+        var dirInput = document.getElementById('newDirector');
+        var name = nameInput.value.trim();
+        var director = dirInput.value.trim();
+
+        if (!name) { alert('기공소명을 입력해 주세요.'); nameInput.focus(); return; }
+
+        var labs = getLabs();
+        var exists = labs.some(function(l) { return l.name === name; });
+        if (exists) { alert('이미 등록된 기공소입니다.'); return; }
+
+        var newLab = { name: name, director: director };
+        labs.push(newLab);
+        saveLabs(labs);
+
+        nameInput.value = '';
+        dirInput.value = '';
+
+        renderLabList();
+        showLinkModal(newLab);
+      });
+
+      document.getElementById('newDirector').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('addLabBtn').click();
+      });
+
+      document.getElementById('newLabName').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('newDirector').focus();
+      });
+
+      // ===== 사이드바: 기공소 목록 =====
+      function renderLabList() {
+        var labs = getLabs();
+        var reservations = getReservations();
+        var list = document.getElementById('labList');
+        list.innerHTML = '';
+
+        // 전체 보기
+        var allItem = document.createElement('li');
+        allItem.className = 'lab-item lab-item-all' + (currentLab === 'all' ? ' active' : '');
+        allItem.innerHTML =
+          '<div class="lab-info">' +
+            '<div class="lab-icon">&#x1F3E0;</div>' +
+            '<div class="lab-detail"><span class="lab-name">전체 보기</span></div>' +
+          '</div>' +
+          '<div class="lab-right">' +
+            '<span class="lab-count">' + reservations.length + '</span>' +
+          '</div>';
+        allItem.addEventListener('click', function() {
+          currentLab = 'all';
+          renderLabList();
+          renderTable();
+        });
+        list.appendChild(allItem);
+
+        // 기공소별
+        labs.forEach(function(lab) {
+          var count = reservations.filter(function(r) { return r.labName === lab.name; }).length;
+          var li = document.createElement('li');
+          li.className = 'lab-item' + (currentLab === lab.name ? ' active' : '');
+
+          li.innerHTML =
+            '<div class="lab-info">' +
+              '<div class="lab-icon">' + escapeHtml(lab.name.charAt(0)) + '</div>' +
+              '<div class="lab-detail">' +
+                '<span class="lab-name">' + escapeHtml(lab.name) + '</span>' +
+                '<span class="lab-director">' + escapeHtml(lab.director || '') + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="lab-right">' +
+              '<span class="lab-count">' + count + '</span>' +
+              '<div class="lab-actions">' +
+                '<button class="lab-action-btn link-btn" title="링크 보기">&#x1F517;</button>' +
+                '<button class="lab-action-btn del" title="삭제">&times;</button>' +
+              '</div>' +
+            '</div>';
+
+          // 클릭: 기공소 선택
+          li.querySelector('.lab-info').addEventListener('click', function() {
+            currentLab = lab.name;
+            renderLabList();
+            renderTable();
+          });
+
+          // 링크 보기
+          li.querySelector('.link-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            showLinkModal(lab);
+          });
+
+          // 삭제
+          li.querySelector('.del').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (confirm('"' + lab.name + '" 기공소를 삭제하시겠습니까?\n(예약 데이터는 유지됩니다)')) {
+              var labs = getLabs().filter(function(l) { return l.name !== lab.name; });
+              saveLabs(labs);
+              if (currentLab === lab.name) currentLab = 'all';
+              renderLabList();
+              renderTable();
+            }
+          });
+
+          list.appendChild(li);
+        });
+      }
+
+      // ===== 테이블 =====
+      function renderTable() {
+        var reservations = getReservations();
+        var tbody = document.getElementById('tableBody');
+        var emptyState = document.getElementById('emptyState');
+
+        var filtered = reservations.filter(function(r) {
+          if (currentLab !== 'all' && r.labName !== currentLab) return false;
+          if (currentStatus !== 'all' && r.status !== currentStatus) return false;
+          if (searchQuery && r.clinicName.toLowerCase().indexOf(searchQuery.toLowerCase()) === -1) return false;
+          return true;
+        });
+
+        filtered.sort(function(a, b) { return b.id - a.id; });
+
+        var statsBase = reservations.filter(function(r) {
+          return currentLab === 'all' || r.labName === currentLab;
+        });
+
+        document.getElementById('statTotal').innerHTML = statsBase.length + '<span class="stat-unit">건</span>';
+        document.getElementById('statWaiting').innerHTML = statsBase.filter(function(r){return r.status==='대기';}).length + '<span class="stat-unit">건</span>';
+        document.getElementById('statConfirmed').innerHTML = statsBase.filter(function(r){return r.status==='확정';}).length + '<span class="stat-unit">건</span>';
+        document.getElementById('statCompleted').innerHTML = statsBase.filter(function(r){return r.status==='완료';}).length + '<span class="stat-unit">건</span>';
+
+        document.getElementById('listTitle').textContent =
+          currentLab === 'all' ? '전체 예약 목록' : currentLab + ' 예약 목록';
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        emptyState.style.display = 'none';
+        tbody.innerHTML = '';
+
+        filtered.forEach(function(r, idx) {
+          var tr = document.createElement('tr');
+          var timeClass = r.time === '오전' ? 'morning' : r.time === '점심시간' ? 'lunch' : 'afternoon';
+          var statusClass = r.status === '대기' ? 'waiting' : r.status === '확정' ? 'confirmed' : r.status === '완료' ? 'completed' : 'cancelled';
+
+          var createdDate = '';
+          if (r.createdAt) {
+            var d = new Date(r.createdAt);
+            createdDate = (d.getMonth()+1) + '/' + d.getDate() + ' ' +
+              String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+          }
+
+          tr.innerHTML =
+            '<td>' + (idx + 1) + '</td>' +
+            '<td class="td-clinic">' + escapeHtml(r.clinicName) + '</td>' +
+            '<td class="td-lab">' + escapeHtml(r.labName) + '</td>' +
+            '<td class="td-date">' + escapeHtml(r.date) + '</td>' +
+            '<td class="td-time"><span class="time-badge ' + timeClass + '">' + escapeHtml(r.time) + '</span></td>' +
+            '<td><span class="status-badge ' + statusClass + '" data-id="' + r.id + '">' + escapeHtml(r.status) + '</span></td>' +
+            '<td class="td-created">' + createdDate + '</td>' +
+            '<td class="td-actions">' +
+              '<button class="action-btn confirm-btn" data-id="' + r.id + '">확정</button>' +
+              '<button class="action-btn complete-btn" data-id="' + r.id + '">완료</button>' +
+              '<button class="action-btn delete" data-id="' + r.id + '">삭제</button>' +
+            '</td>';
+
+          tbody.appendChild(tr);
+        });
+
+        tbody.querySelectorAll('.status-badge').forEach(function(badge) {
+          badge.addEventListener('click', function() { cycleStatus(parseInt(this.dataset.id)); });
+        });
+        tbody.querySelectorAll('.confirm-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { updateStatus(parseInt(this.dataset.id), '확정'); });
+        });
+        tbody.querySelectorAll('.complete-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { updateStatus(parseInt(this.dataset.id), '완료'); });
+        });
+        tbody.querySelectorAll('.delete').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (confirm('이 예약을 삭제하시겠습니까?')) {
+              var data = getReservations().filter(function(r) { return r.id !== parseInt(this.dataset.id); }.bind(this));
+              saveReservations(data);
+              renderLabList();
+              renderTable();
+            }
+          });
+        });
+      }
+
+      function updateStatus(id, status) {
+        var data = getReservations();
+        data.forEach(function(r) { if (r.id === id) r.status = status; });
+        saveReservations(data);
+        renderLabList();
+        renderTable();
+      }
+
+      function cycleStatus(id) {
+        var statuses = ['대기', '확정', '완료', '취소'];
+        var data = getReservations();
+        data.forEach(function(r) {
+          if (r.id === id) {
+            var idx = statuses.indexOf(r.status);
+            r.status = statuses[(idx + 1) % statuses.length];
+          }
+        });
+        saveReservations(data);
+        renderLabList();
+        renderTable();
+      }
+
+      document.querySelectorAll('.filter-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          currentStatus = this.dataset.status;
+          renderTable();
+        });
+      });
+
+      document.getElementById('searchInput').addEventListener('input', function() {
+        searchQuery = this.value;
+        renderTable();
+      });
+
+      renderLabList();
+      renderTable();
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+    })();
+  </script>
+
+</body>
+</html>

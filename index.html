@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>와이티플러스기공소 - 특별 이벤트</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #2e7df6;
+      --primary-dark: #1a5dc4;
+      --primary-light: #e8f1fe;
+      --text: #222;
+      --text-sub: #666;
+      --text-light: #999;
+      --bg: #f7f8fc;
+      --white: #fff;
+      --border: #e4e8ee;
+      --radius: 14px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      background: linear-gradient(135deg, #4a90e2 0%, #2e7df6 40%, #5ba3f5 100%);
+      color: #fff;
+      text-align: center;
+      padding: 88px 24px 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+      top: -200px; right: -100px;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+      bottom: -100px; left: -60px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 7px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+    }
+
+    .hero h1 span { color: #fff; }
+
+    .hero h2 {
+      font-size: 19px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 28px;
+    }
+
+    .hero-line {
+      width: 36px;
+      height: 3px;
+      background: rgba(255,255,255,0.4);
+      margin: 0 auto 24px;
+      border-radius: 2px;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      opacity: 0.85;
+      line-height: 1.9;
+      max-width: 480px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* ===== Container ===== */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== Thank You ===== */
+    .thank-you {
+      text-align: center;
+      padding: 64px 24px;
+      background: var(--white);
+    }
+
+    .thank-you-line {
+      width: 36px;
+      height: 3px;
+      background: var(--primary);
+      margin: 0 auto 22px;
+      border-radius: 2px;
+    }
+
+    .thank-you h3 {
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .thank-you p {
+      font-size: 16px;
+      color: var(--text-sub);
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    /* ===== Events ===== */
+    .events {
+      padding: 64px 24px 80px;
+      background: var(--bg);
+    }
+
+    .events-title {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+
+    .events-title .label {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 5px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .events-title h2 {
+      font-size: 26px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .events-free {
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .events-free strong {
+      color: #e74c3c;
+      font-weight: 800;
+    }
+
+    /* ===== Cards ===== */
+    .event-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .event-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 26px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid var(--border);
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(46,125,246,0.1);
+    }
+
+    .event-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .event-card:nth-child(1)::before { background: linear-gradient(90deg, #f5a623, #f7c948); }
+    .event-card:nth-child(2)::before { background: linear-gradient(90deg, #2e7df6, #56a0f7); }
+    .event-card:nth-child(3)::before { background: linear-gradient(90deg, #27ae60, #58d68d); }
+    .event-card:nth-child(4)::before { background: linear-gradient(90deg, #8e44ad, #bb6bd9); }
+
+    .card-text { flex: 1; min-width: 0; }
+
+    .event-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .event-card:nth-child(1) .event-number { background: #f5a623; }
+    .event-card:nth-child(2) .event-number { background: #2e7df6; }
+    .event-card:nth-child(3) .event-number { background: #27ae60; }
+    .event-card:nth-child(4) .event-number { background: #8e44ad; }
+
+    .event-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .event-card .highlight {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .event-card:nth-child(1) .highlight { background: #fef6e4; color: #c47d10; }
+    .event-card:nth-child(2) .highlight { background: var(--primary-light); color: var(--primary); }
+    .event-card:nth-child(3) .highlight { background: #e8f8ef; color: #1e8449; }
+    .event-card:nth-child(4) .highlight { background: #f5eef8; color: #7d3c98; }
+
+    .event-card p {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.75;
+    }
+
+    .card-image {
+      width: 120px; height: 120px; min-width: 120px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .event-card:nth-child(1) .card-image { background: linear-gradient(145deg, #fff9ed, #fef0d0); }
+    .event-card:nth-child(2) .card-image { background: linear-gradient(145deg, #f0f6ff, #dbe9fd); }
+    .event-card:nth-child(3) .card-image { background: linear-gradient(145deg, #edfaf3, #d5f2e3); }
+    .event-card:nth-child(4) .card-image { background: linear-gradient(145deg, #f8f0fc, #eddcf5); }
+
+    /* ===== Revenue Tips ===== */
+    .revenue-tips {
+      padding: 64px 24px;
+      background: var(--white);
+    }
+
+    .revenue-title {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .revenue-title .label {
+      display: inline-block;
+      background: #fff3e0;
+      color: #e67e22;
+      padding: 5px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .revenue-title h2 {
+      font-size: 26px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .tip-list {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .tip-number {
+      width: 32px; height: 32px; min-width: 32px;
+      background: linear-gradient(135deg, #e67e22, #f5a623);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tip-content h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .tip-content p {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      background: linear-gradient(135deg, #2e7df6 0%, #5ba3f5 100%);
+      color: #fff;
+      text-align: center;
+      padding: 64px 24px;
+    }
+
+    .cta h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; line-height: 1.5; }
+    .cta p { font-size: 16px; opacity: 0.85; margin-bottom: 8px; line-height: 1.8; }
+
+    .cta .visit-info {
+      margin-top: 32px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 24px 32px;
+      display: inline-block;
+      backdrop-filter: blur(6px);
+    }
+
+    .cta .visit-info h4 { font-size: 16px; margin-bottom: 8px; font-weight: 600; }
+    .cta .visit-info p { font-size: 15px; opacity: 0.9; margin-bottom: 0; }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: #2c3e50;
+      color: #a0b4c8;
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 15px;
+    }
+
+    .footer .name { color: #d4e1ed; font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .hero { padding: 56px 20px 48px; }
+      .hero h1 { font-size: 26px; }
+      .hero h2 { font-size: 16px; margin-bottom: 20px; }
+      .hero-badge { font-size: 13px; padding: 5px 14px; margin-bottom: 18px; }
+      .hero-desc { font-size: 15px; line-height: 1.85; }
+
+      .thank-you { padding: 44px 20px; }
+      .thank-you h3 { font-size: 18px; word-break: keep-all; }
+      .thank-you p { font-size: 15px; }
+
+      .events { padding: 44px 16px 52px; }
+      .events-title { margin-bottom: 28px; }
+      .events-title h2 { font-size: 21px; }
+
+      .event-grid { grid-template-columns: 1fr; gap: 12px; }
+      .event-card { padding: 18px 16px; gap: 14px; align-items: center; }
+      .event-number { width: 24px; height: 24px; font-size: 12px; margin-bottom: 8px; }
+      .event-card h3 { font-size: 15px; }
+      .event-card .highlight { font-size: 13px; padding: 2px 8px; margin-bottom: 6px; }
+      .event-card p { font-size: 14px; line-height: 1.7; }
+      .card-image { width: 88px; height: 88px; min-width: 88px; border-radius: 10px; }
+      .card-image svg { width: 76px; height: 76px; }
+
+      .cta { padding: 44px 20px; }
+      .cta h2 { font-size: 19px; }
+      .cta p { font-size: 15px; }
+      .cta .visit-info { padding: 20px 24px; margin-top: 24px; }
+      .cta .visit-info h4 { font-size: 15px; }
+      .cta .visit-info p { font-size: 14px; }
+
+      .footer { padding: 24px 20px; font-size: 14px; }
+      .footer .name { font-size: 15px; }
+
+      .revenue-tips { padding: 44px 16px; }
+      .revenue-title { margin-bottom: 24px; }
+      .revenue-title h2 { font-size: 21px; }
+      .tip-item { padding: 16px; gap: 12px; }
+      .tip-number { width: 28px; height: 28px; min-width: 28px; font-size: 12px; }
+      .tip-content h4 { font-size: 15px; }
+      .tip-content p { font-size: 13px; }
+    }
+
+    @media (max-width: 360px) {
+      .hero { padding: 48px 16px 40px; }
+      .hero h1 { font-size: 22px; }
+      .hero h2 { font-size: 14px; margin-bottom: 16px; }
+      .hero-badge { font-size: 12px; padding: 5px 12px; margin-bottom: 14px; }
+      .hero-desc { font-size: 13px; line-height: 1.8; }
+
+      .thank-you { padding: 36px 16px; }
+      .thank-you h3 { font-size: 17px; }
+      .thank-you p { font-size: 13px; }
+
+      .events { padding: 36px 12px 44px; }
+      .events-title { margin-bottom: 20px; }
+      .events-title .label { font-size: 12px; padding: 4px 12px; }
+      .events-title h2 { font-size: 18px; }
+
+      .event-card { padding: 14px 12px; gap: 10px; }
+      .event-number { width: 22px; height: 22px; font-size: 11px; margin-bottom: 6px; }
+      .event-card h3 { font-size: 14px; margin-bottom: 4px; }
+      .event-card .highlight { font-size: 12px; padding: 2px 7px; margin-bottom: 5px; }
+      .event-card p { font-size: 13px; line-height: 1.6; }
+      .card-image { width: 68px; height: 68px; min-width: 68px; border-radius: 8px; }
+      .card-image svg { width: 56px; height: 56px; }
+
+      .cta { padding: 36px 16px; }
+      .cta h2 { font-size: 17px; }
+      .cta p { font-size: 13px; }
+      .cta .visit-info { padding: 16px 18px; margin-top: 20px; }
+      .cta .visit-info h4 { font-size: 14px; }
+      .cta .visit-info p { font-size: 13px; }
+
+      .footer { padding: 20px 16px; font-size: 13px; }
+      .footer .name { font-size: 14px; }
+
+      .container { padding: 0 16px; }
+
+      .revenue-tips { padding: 36px 12px; }
+      .revenue-title { margin-bottom: 20px; }
+      .revenue-title .label { font-size: 12px; padding: 4px 12px; }
+      .revenue-title h2 { font-size: 18px; }
+      .tip-list { gap: 10px; }
+      .tip-item { padding: 14px 12px; gap: 10px; }
+      .tip-number { width: 24px; height: 24px; min-width: 24px; font-size: 11px; border-radius: 6px; }
+      .tip-content h4 { font-size: 14px; }
+      .tip-content p { font-size: 12px; }
+    }
+
+    /* ===== Reservation ===== */
+    .reservation { padding: 64px 24px; background: var(--white); }
+
+    .reservation-title { text-align: center; margin-bottom: 36px; }
+    .reservation-title .label {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 5px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .reservation-title h2 { font-size: 24px; color: var(--text); font-weight: 700; }
+    .reservation-title p { font-size: 15px; color: var(--text-light); margin-top: 6px; }
+
+    .reservation-form { max-width: 520px; margin: 0 auto; }
+
+    .form-group { margin-bottom: 24px; }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-group input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46,125,246,0.1);
+      background: #fff;
+    }
+    .form-group input[type="text"]::placeholder { color: #bbb; }
+
+    .calendar-wrapper { margin-bottom: 24px; }
+    .calendar-wrapper label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .calendar {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--primary);
+      color: #fff;
+    }
+    .calendar-header .cal-title { font-size: 15px; font-weight: 600; }
+    .calendar-header button {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .calendar-header button:hover { background: rgba(255,255,255,0.25); }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      padding: 8px 8px 0;
+    }
+    .calendar-days .day-name { font-size: 13px; font-weight: 600; color: #999; padding: 8px 0; }
+    .calendar-days .day-name:first-child { color: #e74c3c; }
+    .calendar-days .day-name:last-child { color: #3498db; }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      padding: 0 8px 10px;
+      gap: 3px;
+    }
+    .calendar-grid .day {
+      padding: 9px 0;
+      font-size: 15px;
+      color: #555;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .calendar-grid .day:hover { background: #e8f1fe; }
+    .calendar-grid .day.today { border: 2px solid var(--primary); font-weight: 600; }
+    .calendar-grid .day.selected { background: var(--primary); color: #fff; font-weight: 600; }
+    .calendar-grid .day.other-month { color: #ccc; }
+    .calendar-grid .day.past { color: #ddd; cursor: default; pointer-events: none; }
+    .calendar-grid .day.sunday { color: #e74c3c; }
+    .calendar-grid .day.saturday { color: #3498db; }
+    .calendar-grid .day.sunday.other-month,
+    .calendar-grid .day.saturday.other-month { opacity: 0.4; }
+    .calendar-grid .day.sunday.past,
+    .calendar-grid .day.saturday.past { opacity: 0.35; }
+    .calendar-grid .day.selected.sunday,
+    .calendar-grid .day.selected.saturday { color: #fff; }
+
+    .selected-date-display {
+      text-align: center;
+      padding: 10px;
+      font-size: 15px;
+      color: var(--primary);
+      font-weight: 600;
+      border-top: 1px solid var(--border);
+      background: #f5f8fc;
+    }
+
+    .time-select { margin-bottom: 28px; }
+    .time-select > label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .time-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .time-option { position: relative; }
+    .time-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .time-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg);
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .time-option label .time-icon { font-size: 22px; margin-bottom: 6px; }
+    .time-option label .time-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .time-option label .time-range { font-size: 13px; color: var(--text-light); }
+    .time-option input[type="radio"]:checked + label {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .time-option input[type="radio"]:checked + label .time-label,
+    .time-option input[type="radio"]:checked + label .time-range { color: #fff; }
+    .time-option label:hover { border-color: var(--primary); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover { background: var(--primary-dark); }
+
+    .submit-result {
+      display: none;
+      text-align: center;
+      padding: 32px 20px;
+      margin-top: 20px;
+      background: var(--bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    .submit-result .check-icon {
+      width: 52px; height: 52px;
+      background: #27ae60;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .submit-result .check-icon svg { width: 24px; height: 24px; }
+    .submit-result h4 { font-size: 18px; color: var(--text); margin-bottom: 8px; font-weight: 700; }
+    .submit-result p { font-size: 15px; color: var(--text-sub); line-height: 1.8; }
+    .submit-result .summary {
+      margin-top: 16px;
+      padding: 14px 20px;
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .submit-result .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; }
+    .submit-result .summary-row .label { color: var(--text-light); }
+    .submit-result .summary-row .value { color: var(--primary); font-weight: 600; }
+
+    @media (max-width: 768px) {
+      .reservation { padding: 44px 20px; }
+      .reservation-title h2 { font-size: 20px; }
+      .reservation-title p { font-size: 14px; }
+      .calendar-header .cal-title { font-size: 15px; }
+      .calendar-grid .day { padding: 8px 0; font-size: 14px; }
+      .calendar-days .day-name { font-size: 12px; }
+      .time-options { gap: 8px; }
+      .time-option label { padding: 12px 8px; }
+      .time-option label .time-icon { font-size: 18px; margin-bottom: 4px; }
+      .time-option label .time-label { font-size: 14px; }
+      .time-option label .time-range { font-size: 12px; }
+      .form-group input[type="text"] { padding: 12px 14px; font-size: 14px; }
+      .submit-btn { padding: 14px; font-size: 15px; }
+    }
+
+    @media (max-width: 360px) {
+      .reservation { padding: 36px 16px; }
+      .reservation-title { margin-bottom: 24px; }
+      .reservation-title .label { font-size: 12px; padding: 4px 12px; }
+      .reservation-title h2 { font-size: 18px; }
+      .reservation-title p { font-size: 13px; }
+      .form-group { margin-bottom: 18px; }
+      .form-group label { font-size: 13px; }
+      .form-group input[type="text"] { padding: 11px 12px; font-size: 14px; }
+      .calendar-wrapper { margin-bottom: 18px; }
+      .calendar-wrapper label { font-size: 13px; }
+      .calendar-header { padding: 10px 12px; }
+      .calendar-header .cal-title { font-size: 14px; }
+      .calendar-header button { width: 28px; height: 28px; }
+      .calendar-days { padding: 6px 4px 0; }
+      .calendar-days .day-name { font-size: 11px; padding: 6px 0; }
+      .calendar-grid { padding: 0 4px 8px; gap: 2px; }
+      .calendar-grid .day { padding: 7px 0; font-size: 13px; }
+      .selected-date-display { font-size: 13px; padding: 8px; }
+      .time-select { margin-bottom: 22px; }
+      .time-select > label { font-size: 13px; }
+      .time-options { gap: 6px; }
+      .time-option label { padding: 10px 6px; border-radius: 10px; }
+      .time-option label .time-icon { font-size: 16px; margin-bottom: 3px; }
+      .time-option label .time-label { font-size: 13px; }
+      .time-option label .time-range { font-size: 10px; }
+      .submit-btn { padding: 13px; font-size: 15px; border-radius: 10px; }
+      .submit-result { padding: 24px 16px; margin-top: 16px; }
+      .submit-result h4 { font-size: 16px; }
+      .submit-result p { font-size: 13px; }
+      .submit-result .summary { padding: 12px 14px; }
+      .submit-result .summary-row { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Special Event</div>
+      <h1 data-lab-short><span>와이티플러스</span> 기공소</h1>
+      <h2>거래처 원장님께 드리는 특별한 이벤트</h2>
+      <div class="hero-line"></div>
+      <p class="hero-desc">
+        더욱 정밀하고 최상의 품질로 기공물을 제공하겠습니다.<br>
+        원장님 덕분에 성장할 수 있었기에,<br>
+        저희 거래처에만 드리는 감사 이벤트를 준비했습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Thank You -->
+  <section class="thank-you">
+    <div class="container">
+      <div class="thank-you-line"></div>
+      <h3>저희 기공소를 이용해 주셔서<br>진심으로 감사드립니다</h3>
+      <p>
+        원장님과 함께 성장해 온 <span data-lab-name>와이티플러스기공소</span>가<br>
+        감사의 마음을 담아 특별한 혜택을 드립니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section class="events">
+    <div class="container">
+      <div class="events-title">
+        <div class="label">Benefits</div>
+        <h2>거래처 전용 혜택 안내</h2>
+        <p class="events-free">아래 모든 혜택은 <strong>무료</strong>로 제공됩니다</p>
+      </div>
+
+      <div class="event-grid">
+
+        <!-- 1. 10% 쿠폰 -->
+        <div class="event-card">
+          <div class="card-text">
+            <div class="event-number">1</div>
+            <h3>치과재료 VIP권</h3>
+            <div class="highlight">1년간 10% 할인</div>
+            <p>1년간 치과재료 10% 할인 제공</p>
+          </div>
+          <div class="card-image">
+            <svg width="100" height="100" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="15" width="100" height="80" rx="10" fill="#fff" stroke="#c8963e" stroke-width="1.5" stroke-dasharray="5 3"/>
+              <circle cx="5" cy="55" r="8" fill="#f8edd8"/>
+              <circle cx="105" cy="55" r="8" fill="#f8edd8"/>
+              <line x1="75" y1="22" x2="75" y2="88" stroke="#c8963e" stroke-width="1" stroke-dasharray="3 3"/>
+              <rect x="14" y="24" width="34" height="14" rx="7" fill="#c8963e"/>
+              <text x="31" y="34" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">VIP</text>
+              <text x="42" y="62" text-anchor="middle" fill="#9a7230" font-size="28" font-weight="900">10%</text>
+              <text x="42" y="78" text-anchor="middle" fill="#7a5a20" font-size="8" font-weight="600">DISCOUNT</text>
+              <text x="90" y="48" text-anchor="middle" fill="#9a7230" font-size="8" font-weight="600">1년간</text>
+              <text x="90" y="60" text-anchor="middle" fill="#9a7230" font-size="7" font-weight="600">할인혜택</text>
+              <text x="90" y="72" text-anchor="middle" fill="#c8963e" font-size="7">COUPON</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 2. 덴티스 임플란트 -->
+        <div class="event-card">
+          <div class="card-text">
+            <div class="event-number">2</div>
+            <h3>덴티스 임플란트</h3>
+            <div class="highlight">1억 패키지 할인가 적용</div>
+            <p>단품에도 1억 패키지 최저가 동일 적용</p>
+          </div>
+          <div class="card-image">
+            <svg width="100" height="100" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(25, 5)">
+                <path d="M18 30 Q20 10 30 6 Q40 10 42 30 Z" fill="#dde8f3" stroke="#3b6fa0" stroke-width="1.2"/>
+                <path d="M22 30 L19 38 L41 38 L38 30" fill="#c5d5e8" stroke="#3b6fa0" stroke-width="1"/>
+                <path d="M22 38 L22 80 Q22 88 30 88 Q38 88 38 80 L38 38" fill="#9bb5ce" stroke="#3b6fa0" stroke-width="1"/>
+                <line x1="22" y1="48" x2="38" y2="45" stroke="#3b6fa0" stroke-width="0.6"/>
+                <line x1="22" y1="55" x2="38" y2="52" stroke="#3b6fa0" stroke-width="0.6"/>
+                <line x1="22" y1="62" x2="38" y2="59" stroke="#3b6fa0" stroke-width="0.6"/>
+                <line x1="22" y1="69" x2="38" y2="66" stroke="#3b6fa0" stroke-width="0.6"/>
+                <line x1="22" y1="76" x2="38" y2="73" stroke="#3b6fa0" stroke-width="0.6"/>
+              </g>
+              <text x="55" y="102" text-anchor="middle" fill="#2d5a84" font-size="13" font-weight="700" letter-spacing="1.5">DENTIS</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 3. 뉴스 -->
+        <div class="event-card">
+          <div class="card-text">
+            <div class="event-number">3</div>
+            <h3>치과 뉴스 보도</h3>
+            <div class="highlight">지역 마케팅 지원</div>
+            <p>뉴스·블로그로 지역 환자에게 치과 홍보</p>
+          </div>
+          <div class="card-image">
+            <svg width="100" height="100" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" width="94" height="94" rx="6" fill="#fff" stroke="#3a7d6a" stroke-width="1.2"/>
+              <rect x="8" y="8" width="94" height="20" rx="6" fill="#3a7d6a"/>
+              <text x="55" y="22" text-anchor="middle" fill="#fff" font-size="10" font-weight="600" letter-spacing="1">NEWS</text>
+              <rect x="18" y="36" width="56" height="5" rx="2.5" fill="#ddf0e8"/>
+              <rect x="18" y="46" width="42" height="5" rx="2.5" fill="#ddf0e8"/>
+              <rect x="78" y="36" width="16" height="16" rx="3" fill="#c5e5d8"/>
+              <path d="M80 49 L84 43 L88 47 L91 44 L93 49 Z" fill="#3a7d6a" opacity="0.35"/>
+              <circle cx="90" cy="40" r="2" fill="#3a7d6a" opacity="0.3"/>
+              <rect x="18" y="58" width="74" height="3.5" rx="1.5" fill="#eef7f3"/>
+              <rect x="18" y="66" width="68" height="3.5" rx="1.5" fill="#eef7f3"/>
+              <rect x="18" y="74" width="58" height="3.5" rx="1.5" fill="#eef7f3"/>
+              <circle cx="82" cy="88" r="10" fill="#ddf0e8"/>
+              <text x="82" y="92" text-anchor="middle" fill="#3a7d6a" font-size="10" font-weight="700">B</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 4. 홈페이지 -->
+        <div class="event-card">
+          <div class="card-text">
+            <div class="event-number">4</div>
+            <h3>홈페이지 제작</h3>
+            <div class="highlight">500만원 상당 지원</div>
+            <p>500만원 상당 치과 홈페이지 무상 제작</p>
+          </div>
+          <div class="card-image">
+            <svg width="100" height="100" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" width="94" height="68" rx="5" fill="#fff" stroke="#6b5b95" stroke-width="1.2"/>
+              <rect x="8" y="8" width="94" height="16" rx="5" fill="#6b5b95"/>
+              <circle cx="18" cy="16" r="2.5" fill="#e8a0a0"/>
+              <circle cx="26" cy="16" r="2.5" fill="#e8d88a"/>
+              <circle cx="34" cy="16" r="2.5" fill="#8ac8a0"/>
+              <rect x="42" y="12" width="50" height="8" rx="4" fill="rgba(255,255,255,0.25)"/>
+              <rect x="16" y="30" width="36" height="4" rx="2" fill="#c4b5d8"/>
+              <rect x="16" y="38" width="78" height="14" rx="3" fill="#ece6f3"/>
+              <text x="55" y="48" text-anchor="middle" fill="#6b5b95" font-size="7" font-weight="700">DENTAL CLINIC</text>
+              <rect x="16" y="56" width="24" height="12" rx="3" fill="#f3f0f8"/>
+              <rect x="44" y="56" width="24" height="12" rx="3" fill="#f3f0f8"/>
+              <rect x="72" y="56" width="24" height="12" rx="3" fill="#f3f0f8"/>
+              <rect x="44" y="76" width="22" height="6" rx="1" fill="#6b5b95"/>
+              <rect x="36" y="82" width="38" height="5" rx="2.5" fill="#8a7bb0"/>
+              <rect x="58" y="92" width="44" height="14" rx="7" fill="#6b5b95"/>
+              <text x="80" y="102" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">500만원</text>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Revenue Tips -->
+  <section class="revenue-tips">
+    <div class="container">
+      <div class="revenue-title">
+        <div class="label">Revenue Up</div>
+        <h2>치과 매출을 향상시키는 방법</h2>
+      </div>
+      <div class="tip-list">
+        <div class="tip-item">
+          <div class="tip-number">1</div>
+          <div class="tip-content">
+            <h4>신환 유입 확대</h4>
+            <p>뉴스·블로그 마케팅으로 지역 환자에게 치과를 알리고, 홈페이지를 통해 신규 환자 유입을 늘립니다.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-number">2</div>
+          <div class="tip-content">
+            <h4>재료비 절감</h4>
+            <p>VIP 할인권과 임플란트 패키지 할인가 적용으로 재료 원가를 낮춰 수익률을 높입니다.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-number">3</div>
+          <div class="tip-content">
+            <h4>재방문율 향상</h4>
+            <p>정밀한 기공물 품질로 환자 만족도를 높이고, 재방문과 소개 환자를 유도합니다.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-number">4</div>
+          <div class="tip-content">
+            <h4>온라인 브랜딩 강화</h4>
+            <p>전문 홈페이지와 뉴스 보도로 치과의 신뢰도를 높여 환자 선택률을 향상시킵니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container">
+      <h2>원장님, 함께 성장하는<br><span data-lab-name>와이티플러스기공소</span>가 되겠습니다</h2>
+      <p>앞으로도 많은 관심 부탁드립니다. 감사합니다.</p>
+
+      <div class="visit-info">
+        <h4>방문 상담 안내</h4>
+        <p>원하시는 날짜를 지정해 주시면<br>협력 담당자가 방문하여 진행합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reservation -->
+  <section class="reservation" id="reservation">
+    <div class="container">
+      <div class="reservation-title">
+        <div class="label">Reservation</div>
+        <h2>방문 일정 예약</h2>
+        <p>원하시는 날짜와 시간을 선택해 주시면 담당자가 방문 드립니다.</p>
+      </div>
+
+      <div class="reservation-form" id="reservationForm">
+
+        <!-- 치과명 -->
+        <div class="form-group">
+          <label for="clinicName">치과명</label>
+          <input type="text" id="clinicName" placeholder="예) 미소치과의원">
+        </div>
+
+        <!-- 달력 -->
+        <div class="calendar-wrapper">
+          <label>방문 희망 날짜</label>
+          <div class="calendar">
+            <div class="calendar-header">
+              <button type="button" id="prevMonth" aria-label="이전 달">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 1L3 6L8 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <span class="cal-title" id="calTitle"></span>
+              <button type="button" id="nextMonth" aria-label="다음 달">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 1L9 6L4 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+            <div class="calendar-days">
+              <div class="day-name">일</div>
+              <div class="day-name">월</div>
+              <div class="day-name">화</div>
+              <div class="day-name">수</div>
+              <div class="day-name">목</div>
+              <div class="day-name">금</div>
+              <div class="day-name">토</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="selected-date-display" id="selectedDateDisplay">날짜를 선택해 주세요</div>
+          </div>
+        </div>
+
+        <!-- 시간 선택 -->
+        <div class="time-select">
+          <label>방문 희망 시간</label>
+          <div class="time-options">
+            <div class="time-option">
+              <input type="radio" name="visitTime" id="timeMorning" value="오전">
+              <label for="timeMorning">
+                <span class="time-icon">&#x1F305;</span>
+                <span class="time-label">오전</span>
+                <span class="time-range">09:00 - 12:00</span>
+              </label>
+            </div>
+            <div class="time-option">
+              <input type="radio" name="visitTime" id="timeLunch" value="점심시간">
+              <label for="timeLunch">
+                <span class="time-icon">&#x2600;&#xFE0F;</span>
+                <span class="time-label">점심시간</span>
+                <span class="time-range">12:00 - 14:00</span>
+              </label>
+            </div>
+            <div class="time-option">
+              <input type="radio" name="visitTime" id="timeAfternoon" value="오후">
+              <label for="timeAfternoon">
+                <span class="time-icon">&#x1F307;</span>
+                <span class="time-label">오후</span>
+                <span class="time-range">14:00 - 18:00</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <button type="button" class="submit-btn" id="submitBtn">방문 예약 신청하기</button>
+
+        <!-- 완료 메시지 -->
+        <div class="submit-result" id="submitResult">
+          <div class="check-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h4>예약 신청이 완료되었습니다</h4>
+          <p>확인 후 담당자가 연락드리겠습니다.<br>감사합니다.</p>
+          <div class="summary">
+            <div class="summary-row">
+              <span class="label">치과명</span>
+              <span class="value" id="resultClinic"></span>
+            </div>
+            <div class="summary-row">
+              <span class="label">방문 날짜</span>
+              <span class="value" id="resultDate"></span>
+            </div>
+            <div class="summary-row">
+              <span class="label">방문 시간</span>
+              <span class="value" id="resultTime"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="name" data-director>정용태 소장 올림</div>
+    <p data-lab-name>와이티플러스기공소</p>
+  </footer>
+
+  <script>
+    (function() {
+      // ===== 기공소 설정 (URL 파라미터 우선) =====
+      // 사용법: index.html?lab=기공소이름&director=소장이름
+      var params = new URLSearchParams(window.location.search);
+      var LAB_NAME = params.get('lab') || '와이티플러스기공소';
+      var DIRECTOR_NAME = params.get('director') || '정용태 소장';
+
+      // 페이지에 기공소명 반영
+      document.querySelectorAll('[data-lab-name]').forEach(function(el) {
+        el.textContent = LAB_NAME;
+      });
+      document.querySelectorAll('[data-lab-short]').forEach(function(el) {
+        var short = LAB_NAME.replace('기공소','');
+        el.innerHTML = '<span>' + short + '</span> 기공소';
+      });
+      document.querySelectorAll('[data-director]').forEach(function(el) {
+        el.textContent = DIRECTOR_NAME + ' 올림';
+      });
+      document.title = LAB_NAME + ' - 특별 이벤트';
+
+      // ===== 달력 =====
+      var today = new Date();
+      var currentYear = today.getFullYear();
+      var currentMonth = today.getMonth();
+      var selectedDate = null;
+
+      var calTitle = document.getElementById('calTitle');
+      var calendarGrid = document.getElementById('calendarGrid');
+      var selectedDateDisplay = document.getElementById('selectedDateDisplay');
+
+      function renderCalendar() {
+        calTitle.textContent = currentYear + '년 ' + (currentMonth + 1) + '월';
+        calendarGrid.innerHTML = '';
+
+        var firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        var lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+        var prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
+
+        for (var i = firstDay - 1; i >= 0; i--) {
+          var d = prevLastDate - i;
+          var el = document.createElement('div');
+          el.className = 'day other-month';
+          var dow = (firstDay - 1 - i) % 7;
+          if (dow === 0) el.classList.add('sunday');
+          if (dow === 6) el.classList.add('saturday');
+          el.textContent = d;
+          calendarGrid.appendChild(el);
+        }
+
+        for (var d = 1; d <= lastDate; d++) {
+          (function(d) {
+            var el = document.createElement('div');
+            el.className = 'day';
+            el.textContent = d;
+            var dateObj = new Date(currentYear, currentMonth, d);
+            var dow = dateObj.getDay();
+            if (dow === 0) el.classList.add('sunday');
+            if (dow === 6) el.classList.add('saturday');
+
+            var todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            if (dateObj < todayStart) {
+              el.classList.add('past');
+            } else {
+              el.addEventListener('click', function() {
+                document.querySelectorAll('.calendar-grid .day.selected').forEach(function(s) {
+                  s.classList.remove('selected');
+                });
+                el.classList.add('selected');
+                selectedDate = dateObj;
+                var dayNames = ['일','월','화','수','목','금','토'];
+                selectedDateDisplay.textContent =
+                  dateObj.getFullYear() + '년 ' + (dateObj.getMonth()+1) + '월 ' + d + '일 (' + dayNames[dow] + ')';
+              });
+            }
+
+            if (dateObj.getTime() === todayStart.getTime()) el.classList.add('today');
+
+            if (selectedDate &&
+                dateObj.getFullYear() === selectedDate.getFullYear() &&
+                dateObj.getMonth() === selectedDate.getMonth() &&
+                dateObj.getDate() === selectedDate.getDate()) {
+              el.classList.add('selected');
+            }
+
+            calendarGrid.appendChild(el);
+          })(d);
+        }
+
+        var totalCells = calendarGrid.children.length;
+        var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (var d = 1; d <= remaining; d++) {
+          var el = document.createElement('div');
+          el.className = 'day other-month';
+          var dow = (totalCells + d - 1) % 7;
+          if (dow === 0) el.classList.add('sunday');
+          if (dow === 6) el.classList.add('saturday');
+          el.textContent = d;
+          calendarGrid.appendChild(el);
+        }
+      }
+
+      document.getElementById('prevMonth').addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+      });
+
+      document.getElementById('nextMonth').addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+      });
+
+      renderCalendar();
+
+      // ===== 예약 제출 & localStorage 저장 =====
+      document.getElementById('submitBtn').addEventListener('click', function() {
+        var clinicName = document.getElementById('clinicName').value.trim();
+        var timeEl = document.querySelector('input[name="visitTime"]:checked');
+
+        if (!clinicName) {
+          alert('치과명을 입력해 주세요.');
+          document.getElementById('clinicName').focus();
+          return;
+        }
+        if (!selectedDate) {
+          alert('방문 희망 날짜를 선택해 주세요.');
+          return;
+        }
+        if (!timeEl) {
+          alert('방문 희망 시간을 선택해 주세요.');
+          return;
+        }
+
+        var dayNames = ['일','월','화','수','목','금','토'];
+        var dateStr = selectedDate.getFullYear() + '년 ' +
+          (selectedDate.getMonth()+1) + '월 ' +
+          selectedDate.getDate() + '일 (' +
+          dayNames[selectedDate.getDay()] + ')';
+
+        // localStorage에 예약 저장
+        var reservation = {
+          id: Date.now(),
+          labName: LAB_NAME,
+          clinicName: clinicName,
+          date: dateStr,
+          dateRaw: selectedDate.toISOString().split('T')[0],
+          time: timeEl.value,
+          createdAt: new Date().toISOString(),
+          status: '대기'
+        };
+
+        var reservations = JSON.parse(localStorage.getItem('yt_reservations') || '[]');
+        reservations.push(reservation);
+        localStorage.setItem('yt_reservations', JSON.stringify(reservations));
+
+        // 기공소 목록에 등록 (객체 배열 형식)
+        var labs = JSON.parse(localStorage.getItem('yt_labs') || '[]');
+        // 하위호환: 문자열 배열이면 객체로 변환
+        if (labs.length > 0 && typeof labs[0] === 'string') {
+          labs = labs.map(function(n) { return { name: n, director: '' }; });
+        }
+        var exists = labs.some(function(l) { return l.name === LAB_NAME; });
+        if (!exists) {
+          labs.push({ name: LAB_NAME, director: DIRECTOR_NAME });
+          localStorage.setItem('yt_labs', JSON.stringify(labs));
+        }
+
+        document.getElementById('resultClinic').textContent = clinicName;
+        document.getElementById('resultDate').textContent = dateStr;
+        document.getElementById('resultTime').textContent = timeEl.value;
+
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('submitResult').style.display = 'block';
+      });
+    })();
+  </script>
+
+</body>
+</html>
