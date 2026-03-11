@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90e2"/>
+      <stop offset="40%" style="stop-color:#2e7df6"/>
+      <stop offset="100%" style="stop-color:#5ba3f5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1000" height="600" fill="url(#bg)"/>
+
+  <!-- 장식 원 -->
+  <circle cx="920" cy="60" r="180" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="80" cy="540" r="130" fill="rgba(255,255,255,0.04)"/>
+  <circle cx="800" cy="520" r="90" fill="rgba(255,255,255,0.03)"/>
+  <circle cx="150" cy="100" r="60" fill="rgba(255,255,255,0.03)"/>
+
+  <!-- ALL FREE 배지 -->
+  <rect x="790" y="30" width="170" height="46" rx="23" fill="#e74c3c"/>
+  <text x="875" y="60" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="800" letter-spacing="2">ALL FREE</text>
+
+  <!-- SPECIAL EVENT 배지 -->
+  <rect x="370" y="85" width="260" height="38" rx="19" fill="rgba(255,255,255,0.2)"/>
+  <text x="500" y="111" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="16" font-weight="600" letter-spacing="3">SPECIAL EVENT</text>
+
+  <!-- 메인 타이틀 -->
+  <text x="500" y="195" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="48" font-weight="800">거래처 원장님께 드리는</text>
+  <text x="500" y="258" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="48" font-weight="800">특별한 혜택</text>
+
+  <!-- 서브 텍스트 -->
+  <text x="500" y="315" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="Arial,sans-serif" font-size="22" font-weight="300">소중한 인연에 보답하고자 준비한 거래처 전용 무료 혜택입니다</text>
+
+  <!-- 구분선 -->
+  <rect x="460" y="345" width="80" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- 혜택 태그들 -->
+  <rect x="72" y="385" width="190" height="44" rx="22" fill="rgba(255,255,255,0.18)"/>
+  <text x="167" y="414" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="600">재료 10% 할인</text>
+
+  <rect x="290" y="385" width="200" height="44" rx="22" fill="rgba(255,255,255,0.18)"/>
+  <text x="390" y="414" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="600">임플란트 최저가</text>
+
+  <rect x="518" y="385" width="180" height="44" rx="22" fill="rgba(255,255,255,0.18)"/>
+  <text x="608" y="414" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="600">뉴스 마케팅</text>
+
+  <rect x="726" y="385" width="190" height="44" rx="22" fill="rgba(255,255,255,0.18)"/>
+  <text x="821" y="414" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="600">홈페이지 제작</text>
+
+  <!-- 하단 CTA -->
+  <rect x="370" y="470" width="260" height="52" rx="26" fill="rgba(255,255,255,0.95)"/>
+  <text x="500" y="503" text-anchor="middle" fill="#2e7df6" font-family="Arial,sans-serif" font-size="18" font-weight="700">방문 예약 신청하기</text>
+
+  <!-- 하단 안내 -->
+  <text x="500" y="560" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="Arial,sans-serif" font-size="14" font-weight="400">부담 없이 신청해 주세요</text>
+</svg>

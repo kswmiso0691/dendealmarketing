@@ -37,6 +37,26 @@
 
     .admin-header h1 span { color: #fff; opacity: 0.9; }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .download-btn {
+      font-size: 12px;
+      background: rgba(255,255,255,0.2);
+      padding: 7px 16px;
+      border-radius: 50px;
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+    }
+
+    .download-btn:hover { background: rgba(255,255,255,0.35); }
+
     .admin-header .badge {
       font-size: 10px;
       background: rgba(255,255,255,0.2);
@@ -627,7 +647,10 @@
 
   <header class="admin-header">
     <h1>예약 관리 시스템</h1>
-    <div class="badge">ADMIN</div>
+    <div class="header-right">
+      <a href="banner.png" download="배너이미지_1000x600.png" class="download-btn">배너 다운로드</a>
+      <div class="badge">ADMIN</div>
+    </div>
   </header>
 
   <div class="admin-body">
