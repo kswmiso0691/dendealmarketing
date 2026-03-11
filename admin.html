@@ -706,314 +706,304 @@
     </div>
   </div>
 
-  <script>
-    (function() {
-      var currentLab = 'all';
-      var currentStatus = 'all';
-      var searchQuery = '';
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-      // ===== 데이터 =====
-      function getReservations() {
-        return JSON.parse(localStorage.getItem('yt_reservations') || '[]');
-      }
-      function saveReservations(data) {
-        localStorage.setItem('yt_reservations', JSON.stringify(data));
-      }
-      // labs는 이제 객체 배열: [{name, director}]
-      function getLabs() {
-        var raw = localStorage.getItem('yt_labs');
-        if (!raw) return [];
-        var parsed = JSON.parse(raw);
-        // 하위호환: 문자열 배열이면 객체로 변환
-        if (parsed.length > 0 && typeof parsed[0] === 'string') {
-          parsed = parsed.map(function(name) {
-            return { name: name, director: '' };
-          });
-          saveLabs(parsed);
-        }
-        return parsed;
-      }
-      function saveLabs(data) {
-        localStorage.setItem('yt_labs', JSON.stringify(data));
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSvI4BnsestFaf-dWOUKjOUQ3bNCkHEWA",
+      authDomain: "markating-5891e.firebaseapp.com",
+      projectId: "markating-5891e",
+      storageBucket: "markating-5891e.firebasestorage.app",
+      messagingSenderId: "76147962308",
+      appId: "1:76147962308:web:10489f6c6a31b9ad63f491",
+      measurementId: "G-1LR644RK8N"
+    };
 
-      function getLabPageUrl(lab) {
-        var base = window.location.href.replace(/admin\.html.*$/, 'index.html');
-        var url = base + '?lab=' + encodeURIComponent(lab.name);
-        if (lab.director) url += '&director=' + encodeURIComponent(lab.director);
-        return url;
-      }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-      // ===== 모달 =====
-      function showLinkModal(lab) {
-        var url = getLabPageUrl(lab);
-        document.getElementById('modalLabName').textContent = lab.name + ' 등록 완료';
-        document.getElementById('modalInfoLab').textContent = lab.name;
-        document.getElementById('modalInfoDir').textContent = lab.director || '-';
-        document.getElementById('modalLink').value = url;
+    var currentLab = 'all';
+    var currentStatus = 'all';
+    var searchQuery = '';
+    var allReservations = [];
+    var allLabs = [];
+
+    // ===== Firestore 실시간 리스너 =====
+    onSnapshot(collection(db, 'reservations'), function(snapshot) {
+      allReservations = [];
+      snapshot.forEach(function(docSnap) {
+        var data = docSnap.data();
+        data._id = docSnap.id;
+        allReservations.push(data);
+      });
+      renderLabList();
+      renderTable();
+    });
+
+    onSnapshot(collection(db, 'labs'), function(snapshot) {
+      allLabs = [];
+      snapshot.forEach(function(docSnap) {
+        var data = docSnap.data();
+        data._id = docSnap.id;
+        allLabs.push(data);
+      });
+      renderLabList();
+      renderTable();
+    });
+
+    function getLabPageUrl(lab) {
+      var base = window.location.href.replace(/admin\.html.*$/, 'index.html');
+      var url = base + '?lab=' + encodeURIComponent(lab.name);
+      if (lab.director) url += '&director=' + encodeURIComponent(lab.director);
+      return url;
+    }
+
+    // ===== 모달 =====
+    function showLinkModal(lab) {
+      var url = getLabPageUrl(lab);
+      document.getElementById('modalLabName').textContent = lab.name + ' 등록 완료';
+      document.getElementById('modalInfoLab').textContent = lab.name;
+      document.getElementById('modalInfoDir').textContent = lab.director || '-';
+      document.getElementById('modalLink').value = url;
+      document.getElementById('copyLinkBtn').textContent = '복사';
+      document.getElementById('copyLinkBtn').classList.remove('copied');
+      document.getElementById('linkModal').classList.add('show');
+    }
+
+    document.getElementById('modalCloseBtn').addEventListener('click', function() {
+      document.getElementById('linkModal').classList.remove('show');
+    });
+
+    document.getElementById('linkModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('show');
+    });
+
+    document.getElementById('copyLinkBtn').addEventListener('click', function() {
+      var input = document.getElementById('modalLink');
+      input.select();
+      document.execCommand('copy');
+      this.textContent = '복사됨';
+      this.classList.add('copied');
+      setTimeout(function() {
         document.getElementById('copyLinkBtn').textContent = '복사';
         document.getElementById('copyLinkBtn').classList.remove('copied');
-        document.getElementById('linkModal').classList.add('show');
-      }
+      }, 2000);
+    });
 
-      document.getElementById('modalCloseBtn').addEventListener('click', function() {
-        document.getElementById('linkModal').classList.remove('show');
-      });
+    // ===== 기공소 추가 =====
+    document.getElementById('addLabBtn').addEventListener('click', async function() {
+      var nameInput = document.getElementById('newLabName');
+      var dirInput = document.getElementById('newDirector');
+      var name = nameInput.value.trim();
+      var director = dirInput.value.trim();
 
-      document.getElementById('linkModal').addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('show');
-      });
+      if (!name) { alert('기공소명을 입력해 주세요.'); nameInput.focus(); return; }
 
-      document.getElementById('copyLinkBtn').addEventListener('click', function() {
-        var input = document.getElementById('modalLink');
-        input.select();
-        document.execCommand('copy');
-        this.textContent = '복사됨';
-        this.classList.add('copied');
-        setTimeout(function() {
-          document.getElementById('copyLinkBtn').textContent = '복사';
-          document.getElementById('copyLinkBtn').classList.remove('copied');
-        }, 2000);
-      });
+      var exists = allLabs.some(function(l) { return l.name === name; });
+      if (exists) { alert('이미 등록된 기공소입니다.'); return; }
 
-      // ===== 기공소 추가 =====
-      document.getElementById('addLabBtn').addEventListener('click', function() {
-        var nameInput = document.getElementById('newLabName');
-        var dirInput = document.getElementById('newDirector');
-        var name = nameInput.value.trim();
-        var director = dirInput.value.trim();
+      var newLab = { name: name, director: director };
+      await addDoc(collection(db, 'labs'), newLab);
 
-        if (!name) { alert('기공소명을 입력해 주세요.'); nameInput.focus(); return; }
+      nameInput.value = '';
+      dirInput.value = '';
 
-        var labs = getLabs();
-        var exists = labs.some(function(l) { return l.name === name; });
-        if (exists) { alert('이미 등록된 기공소입니다.'); return; }
+      showLinkModal(newLab);
+    });
 
-        var newLab = { name: name, director: director };
-        labs.push(newLab);
-        saveLabs(labs);
+    document.getElementById('newDirector').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('addLabBtn').click();
+    });
 
-        nameInput.value = '';
-        dirInput.value = '';
+    document.getElementById('newLabName').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('newDirector').focus();
+    });
 
+    // ===== 사이드바: 기공소 목록 =====
+    function renderLabList() {
+      var list = document.getElementById('labList');
+      list.innerHTML = '';
+
+      // 전체 보기
+      var allItem = document.createElement('li');
+      allItem.className = 'lab-item lab-item-all' + (currentLab === 'all' ? ' active' : '');
+      allItem.innerHTML =
+        '<div class="lab-info">' +
+          '<div class="lab-icon">&#x1F3E0;</div>' +
+          '<div class="lab-detail"><span class="lab-name">전체 보기</span></div>' +
+        '</div>' +
+        '<div class="lab-right">' +
+          '<span class="lab-count">' + allReservations.length + '</span>' +
+        '</div>';
+      allItem.addEventListener('click', function() {
+        currentLab = 'all';
         renderLabList();
-        showLinkModal(newLab);
+        renderTable();
       });
+      list.appendChild(allItem);
 
-      document.getElementById('newDirector').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('addLabBtn').click();
-      });
+      // 기공소별
+      allLabs.forEach(function(lab) {
+        var count = allReservations.filter(function(r) { return r.labName === lab.name; }).length;
+        var li = document.createElement('li');
+        li.className = 'lab-item' + (currentLab === lab.name ? ' active' : '');
 
-      document.getElementById('newLabName').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('newDirector').focus();
-      });
-
-      // ===== 사이드바: 기공소 목록 =====
-      function renderLabList() {
-        var labs = getLabs();
-        var reservations = getReservations();
-        var list = document.getElementById('labList');
-        list.innerHTML = '';
-
-        // 전체 보기
-        var allItem = document.createElement('li');
-        allItem.className = 'lab-item lab-item-all' + (currentLab === 'all' ? ' active' : '');
-        allItem.innerHTML =
+        li.innerHTML =
           '<div class="lab-info">' +
-            '<div class="lab-icon">&#x1F3E0;</div>' +
-            '<div class="lab-detail"><span class="lab-name">전체 보기</span></div>' +
+            '<div class="lab-icon">' + escapeHtml(lab.name.charAt(0)) + '</div>' +
+            '<div class="lab-detail">' +
+              '<span class="lab-name">' + escapeHtml(lab.name) + '</span>' +
+              '<span class="lab-director">' + escapeHtml(lab.director || '') + '</span>' +
+            '</div>' +
           '</div>' +
           '<div class="lab-right">' +
-            '<span class="lab-count">' + reservations.length + '</span>' +
+            '<span class="lab-count">' + count + '</span>' +
+            '<div class="lab-actions">' +
+              '<button class="lab-action-btn link-btn" title="링크 보기">&#x1F517;</button>' +
+              '<button class="lab-action-btn del" title="삭제">&times;</button>' +
+            '</div>' +
           '</div>';
-        allItem.addEventListener('click', function() {
-          currentLab = 'all';
+
+        li.querySelector('.lab-info').addEventListener('click', function() {
+          currentLab = lab.name;
           renderLabList();
           renderTable();
         });
-        list.appendChild(allItem);
 
-        // 기공소별
-        labs.forEach(function(lab) {
-          var count = reservations.filter(function(r) { return r.labName === lab.name; }).length;
-          var li = document.createElement('li');
-          li.className = 'lab-item' + (currentLab === lab.name ? ' active' : '');
-
-          li.innerHTML =
-            '<div class="lab-info">' +
-              '<div class="lab-icon">' + escapeHtml(lab.name.charAt(0)) + '</div>' +
-              '<div class="lab-detail">' +
-                '<span class="lab-name">' + escapeHtml(lab.name) + '</span>' +
-                '<span class="lab-director">' + escapeHtml(lab.director || '') + '</span>' +
-              '</div>' +
-            '</div>' +
-            '<div class="lab-right">' +
-              '<span class="lab-count">' + count + '</span>' +
-              '<div class="lab-actions">' +
-                '<button class="lab-action-btn link-btn" title="링크 보기">&#x1F517;</button>' +
-                '<button class="lab-action-btn del" title="삭제">&times;</button>' +
-              '</div>' +
-            '</div>';
-
-          // 클릭: 기공소 선택
-          li.querySelector('.lab-info').addEventListener('click', function() {
-            currentLab = lab.name;
-            renderLabList();
-            renderTable();
-          });
-
-          // 링크 보기
-          li.querySelector('.link-btn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            showLinkModal(lab);
-          });
-
-          // 삭제
-          li.querySelector('.del').addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (confirm('"' + lab.name + '" 기공소를 삭제하시겠습니까?\n(예약 데이터는 유지됩니다)')) {
-              var labs = getLabs().filter(function(l) { return l.name !== lab.name; });
-              saveLabs(labs);
-              if (currentLab === lab.name) currentLab = 'all';
-              renderLabList();
-              renderTable();
-            }
-          });
-
-          list.appendChild(li);
+        li.querySelector('.link-btn').addEventListener('click', function(e) {
+          e.stopPropagation();
+          showLinkModal(lab);
         });
+
+        li.querySelector('.del').addEventListener('click', async function(e) {
+          e.stopPropagation();
+          if (confirm('"' + lab.name + '" 기공소를 삭제하시겠습니까?\n(예약 데이터는 유지됩니다)')) {
+            await deleteDoc(doc(db, 'labs', lab._id));
+            if (currentLab === lab.name) currentLab = 'all';
+          }
+        });
+
+        list.appendChild(li);
+      });
+    }
+
+    // ===== 테이블 =====
+    function renderTable() {
+      var tbody = document.getElementById('tableBody');
+      var emptyState = document.getElementById('emptyState');
+
+      var filtered = allReservations.filter(function(r) {
+        if (currentLab !== 'all' && r.labName !== currentLab) return false;
+        if (currentStatus !== 'all' && r.status !== currentStatus) return false;
+        if (searchQuery && r.clinicName.toLowerCase().indexOf(searchQuery.toLowerCase()) === -1) return false;
+        return true;
+      });
+
+      filtered.sort(function(a, b) {
+        return (b.createdAt || '').localeCompare(a.createdAt || '');
+      });
+
+      var statsBase = allReservations.filter(function(r) {
+        return currentLab === 'all' || r.labName === currentLab;
+      });
+
+      document.getElementById('statTotal').innerHTML = statsBase.length + '<span class="stat-unit">건</span>';
+      document.getElementById('statWaiting').innerHTML = statsBase.filter(function(r){return r.status==='대기';}).length + '<span class="stat-unit">건</span>';
+      document.getElementById('statConfirmed').innerHTML = statsBase.filter(function(r){return r.status==='확정';}).length + '<span class="stat-unit">건</span>';
+      document.getElementById('statCompleted').innerHTML = statsBase.filter(function(r){return r.status==='완료';}).length + '<span class="stat-unit">건</span>';
+
+      document.getElementById('listTitle').textContent =
+        currentLab === 'all' ? '전체 예약 목록' : currentLab + ' 예약 목록';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
       }
 
-      // ===== 테이블 =====
-      function renderTable() {
-        var reservations = getReservations();
-        var tbody = document.getElementById('tableBody');
-        var emptyState = document.getElementById('emptyState');
+      emptyState.style.display = 'none';
+      tbody.innerHTML = '';
 
-        var filtered = reservations.filter(function(r) {
-          if (currentLab !== 'all' && r.labName !== currentLab) return false;
-          if (currentStatus !== 'all' && r.status !== currentStatus) return false;
-          if (searchQuery && r.clinicName.toLowerCase().indexOf(searchQuery.toLowerCase()) === -1) return false;
-          return true;
-        });
+      filtered.forEach(function(r, idx) {
+        var tr = document.createElement('tr');
+        var timeClass = r.time === '오전' ? 'morning' : r.time === '점심시간' ? 'lunch' : 'afternoon';
+        var statusClass = r.status === '대기' ? 'waiting' : r.status === '확정' ? 'confirmed' : r.status === '완료' ? 'completed' : 'cancelled';
 
-        filtered.sort(function(a, b) { return b.id - a.id; });
-
-        var statsBase = reservations.filter(function(r) {
-          return currentLab === 'all' || r.labName === currentLab;
-        });
-
-        document.getElementById('statTotal').innerHTML = statsBase.length + '<span class="stat-unit">건</span>';
-        document.getElementById('statWaiting').innerHTML = statsBase.filter(function(r){return r.status==='대기';}).length + '<span class="stat-unit">건</span>';
-        document.getElementById('statConfirmed').innerHTML = statsBase.filter(function(r){return r.status==='확정';}).length + '<span class="stat-unit">건</span>';
-        document.getElementById('statCompleted').innerHTML = statsBase.filter(function(r){return r.status==='완료';}).length + '<span class="stat-unit">건</span>';
-
-        document.getElementById('listTitle').textContent =
-          currentLab === 'all' ? '전체 예약 목록' : currentLab + ' 예약 목록';
-
-        if (filtered.length === 0) {
-          tbody.innerHTML = '';
-          emptyState.style.display = 'block';
-          return;
+        var createdDate = '';
+        if (r.createdAt) {
+          var d = new Date(r.createdAt);
+          createdDate = (d.getMonth()+1) + '/' + d.getDate() + ' ' +
+            String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
         }
 
-        emptyState.style.display = 'none';
-        tbody.innerHTML = '';
+        tr.innerHTML =
+          '<td>' + (idx + 1) + '</td>' +
+          '<td class="td-clinic">' + escapeHtml(r.clinicName) + '</td>' +
+          '<td class="td-lab">' + escapeHtml(r.labName) + '</td>' +
+          '<td class="td-date">' + escapeHtml(r.date) + '</td>' +
+          '<td class="td-time"><span class="time-badge ' + timeClass + '">' + escapeHtml(r.time) + '</span></td>' +
+          '<td><span class="status-badge ' + statusClass + '" data-id="' + r._id + '">' + escapeHtml(r.status) + '</span></td>' +
+          '<td class="td-created">' + createdDate + '</td>' +
+          '<td class="td-actions">' +
+            '<button class="action-btn confirm-btn" data-id="' + r._id + '">확정</button>' +
+            '<button class="action-btn complete-btn" data-id="' + r._id + '">완료</button>' +
+            '<button class="action-btn delete" data-id="' + r._id + '">삭제</button>' +
+          '</td>';
 
-        filtered.forEach(function(r, idx) {
-          var tr = document.createElement('tr');
-          var timeClass = r.time === '오전' ? 'morning' : r.time === '점심시간' ? 'lunch' : 'afternoon';
-          var statusClass = r.status === '대기' ? 'waiting' : r.status === '확정' ? 'confirmed' : r.status === '완료' ? 'completed' : 'cancelled';
-
-          var createdDate = '';
-          if (r.createdAt) {
-            var d = new Date(r.createdAt);
-            createdDate = (d.getMonth()+1) + '/' + d.getDate() + ' ' +
-              String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-          }
-
-          tr.innerHTML =
-            '<td>' + (idx + 1) + '</td>' +
-            '<td class="td-clinic">' + escapeHtml(r.clinicName) + '</td>' +
-            '<td class="td-lab">' + escapeHtml(r.labName) + '</td>' +
-            '<td class="td-date">' + escapeHtml(r.date) + '</td>' +
-            '<td class="td-time"><span class="time-badge ' + timeClass + '">' + escapeHtml(r.time) + '</span></td>' +
-            '<td><span class="status-badge ' + statusClass + '" data-id="' + r.id + '">' + escapeHtml(r.status) + '</span></td>' +
-            '<td class="td-created">' + createdDate + '</td>' +
-            '<td class="td-actions">' +
-              '<button class="action-btn confirm-btn" data-id="' + r.id + '">확정</button>' +
-              '<button class="action-btn complete-btn" data-id="' + r.id + '">완료</button>' +
-              '<button class="action-btn delete" data-id="' + r.id + '">삭제</button>' +
-            '</td>';
-
-          tbody.appendChild(tr);
-        });
-
-        tbody.querySelectorAll('.status-badge').forEach(function(badge) {
-          badge.addEventListener('click', function() { cycleStatus(parseInt(this.dataset.id)); });
-        });
-        tbody.querySelectorAll('.confirm-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() { updateStatus(parseInt(this.dataset.id), '확정'); });
-        });
-        tbody.querySelectorAll('.complete-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() { updateStatus(parseInt(this.dataset.id), '완료'); });
-        });
-        tbody.querySelectorAll('.delete').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            if (confirm('이 예약을 삭제하시겠습니까?')) {
-              var data = getReservations().filter(function(r) { return r.id !== parseInt(this.dataset.id); }.bind(this));
-              saveReservations(data);
-              renderLabList();
-              renderTable();
-            }
-          });
-        });
-      }
-
-      function updateStatus(id, status) {
-        var data = getReservations();
-        data.forEach(function(r) { if (r.id === id) r.status = status; });
-        saveReservations(data);
-        renderLabList();
-        renderTable();
-      }
-
-      function cycleStatus(id) {
-        var statuses = ['대기', '확정', '완료', '취소'];
-        var data = getReservations();
-        data.forEach(function(r) {
-          if (r.id === id) {
-            var idx = statuses.indexOf(r.status);
-            r.status = statuses[(idx + 1) % statuses.length];
-          }
-        });
-        saveReservations(data);
-        renderLabList();
-        renderTable();
-      }
-
-      document.querySelectorAll('.filter-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-          this.classList.add('active');
-          currentStatus = this.dataset.status;
-          renderTable();
-        });
+        tbody.appendChild(tr);
       });
 
-      document.getElementById('searchInput').addEventListener('input', function() {
-        searchQuery = this.value;
+      tbody.querySelectorAll('.status-badge').forEach(function(badge) {
+        badge.addEventListener('click', function() { cycleStatus(this.dataset.id); });
+      });
+      tbody.querySelectorAll('.confirm-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { updateStatus(this.dataset.id, '확정'); });
+      });
+      tbody.querySelectorAll('.complete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { updateStatus(this.dataset.id, '완료'); });
+      });
+      tbody.querySelectorAll('.delete').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          if (confirm('이 예약을 삭제하시겠습니까?')) {
+            await deleteDoc(doc(db, 'reservations', this.dataset.id));
+          }
+        });
+      });
+    }
+
+    async function updateStatus(id, status) {
+      await updateDoc(doc(db, 'reservations', id), { status: status });
+    }
+
+    async function cycleStatus(id) {
+      var statuses = ['대기', '확정', '완료', '취소'];
+      var r = allReservations.find(function(r) { return r._id === id; });
+      if (r) {
+        var idx = statuses.indexOf(r.status);
+        var newStatus = statuses[(idx + 1) % statuses.length];
+        await updateDoc(doc(db, 'reservations', id), { status: newStatus });
+      }
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        currentStatus = this.dataset.status;
         renderTable();
       });
+    });
 
-      renderLabList();
+    document.getElementById('searchInput').addEventListener('input', function() {
+      searchQuery = this.value;
       renderTable();
+    });
 
-      function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      }
-    })();
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
   </script>
 
 </body>

@@ -1066,150 +1066,167 @@
     <p data-lab-name>와이티플러스기공소</p>
   </footer>
 
-  <script>
-    (function() {
-      // ===== 기공소 설정 (URL 파라미터 우선) =====
-      // 사용법: index.html?lab=기공소이름&director=소장이름
-      var params = new URLSearchParams(window.location.search);
-      var LAB_NAME = params.get('lab') || '와이티플러스기공소';
-      var DIRECTOR_NAME = params.get('director') || '정용태 소장';
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-      // 페이지에 기공소명 반영
-      document.querySelectorAll('[data-lab-name]').forEach(function(el) {
-        el.textContent = LAB_NAME;
-      });
-      document.querySelectorAll('[data-lab-short]').forEach(function(el) {
-        var short = LAB_NAME.replace('기공소','');
-        el.innerHTML = '<span>' + short + '</span> 기공소';
-      });
-      document.querySelectorAll('[data-director]').forEach(function(el) {
-        el.textContent = DIRECTOR_NAME + ' 올림';
-      });
-      document.title = LAB_NAME + ' - 특별 이벤트';
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSvI4BnsestFaf-dWOUKjOUQ3bNCkHEWA",
+      authDomain: "markating-5891e.firebaseapp.com",
+      projectId: "markating-5891e",
+      storageBucket: "markating-5891e.firebasestorage.app",
+      messagingSenderId: "76147962308",
+      appId: "1:76147962308:web:10489f6c6a31b9ad63f491",
+      measurementId: "G-1LR644RK8N"
+    };
 
-      // ===== 달력 =====
-      var today = new Date();
-      var currentYear = today.getFullYear();
-      var currentMonth = today.getMonth();
-      var selectedDate = null;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-      var calTitle = document.getElementById('calTitle');
-      var calendarGrid = document.getElementById('calendarGrid');
-      var selectedDateDisplay = document.getElementById('selectedDateDisplay');
+    // ===== 기공소 설정 =====
+    var params = new URLSearchParams(window.location.search);
+    var LAB_NAME = params.get('lab') || '와이티플러스기공소';
+    var DIRECTOR_NAME = params.get('director') || '정용태 소장';
 
-      function renderCalendar() {
-        calTitle.textContent = currentYear + '년 ' + (currentMonth + 1) + '월';
-        calendarGrid.innerHTML = '';
+    document.querySelectorAll('[data-lab-name]').forEach(function(el) {
+      el.textContent = LAB_NAME;
+    });
+    document.querySelectorAll('[data-lab-short]').forEach(function(el) {
+      var short = LAB_NAME.replace('기공소','');
+      el.innerHTML = '<span>' + short + '</span> 기공소';
+    });
+    document.querySelectorAll('[data-director]').forEach(function(el) {
+      el.textContent = DIRECTOR_NAME + ' 올림';
+    });
+    document.title = LAB_NAME + ' - 특별 이벤트';
 
-        var firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        var lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
-        var prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
+    // ===== 달력 =====
+    var today = new Date();
+    var currentYear = today.getFullYear();
+    var currentMonth = today.getMonth();
+    var selectedDate = null;
 
-        for (var i = firstDay - 1; i >= 0; i--) {
-          var d = prevLastDate - i;
-          var el = document.createElement('div');
-          el.className = 'day other-month';
-          var dow = (firstDay - 1 - i) % 7;
-          if (dow === 0) el.classList.add('sunday');
-          if (dow === 6) el.classList.add('saturday');
-          el.textContent = d;
-          calendarGrid.appendChild(el);
-        }
+    var calTitle = document.getElementById('calTitle');
+    var calendarGrid = document.getElementById('calendarGrid');
+    var selectedDateDisplay = document.getElementById('selectedDateDisplay');
 
-        for (var d = 1; d <= lastDate; d++) {
-          (function(d) {
-            var el = document.createElement('div');
-            el.className = 'day';
-            el.textContent = d;
-            var dateObj = new Date(currentYear, currentMonth, d);
-            var dow = dateObj.getDay();
-            if (dow === 0) el.classList.add('sunday');
-            if (dow === 6) el.classList.add('saturday');
+    function renderCalendar() {
+      calTitle.textContent = currentYear + '년 ' + (currentMonth + 1) + '월';
+      calendarGrid.innerHTML = '';
 
-            var todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            if (dateObj < todayStart) {
-              el.classList.add('past');
-            } else {
-              el.addEventListener('click', function() {
-                document.querySelectorAll('.calendar-grid .day.selected').forEach(function(s) {
-                  s.classList.remove('selected');
-                });
-                el.classList.add('selected');
-                selectedDate = dateObj;
-                var dayNames = ['일','월','화','수','목','금','토'];
-                selectedDateDisplay.textContent =
-                  dateObj.getFullYear() + '년 ' + (dateObj.getMonth()+1) + '월 ' + d + '일 (' + dayNames[dow] + ')';
-              });
-            }
+      var firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      var lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+      var prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
 
-            if (dateObj.getTime() === todayStart.getTime()) el.classList.add('today');
-
-            if (selectedDate &&
-                dateObj.getFullYear() === selectedDate.getFullYear() &&
-                dateObj.getMonth() === selectedDate.getMonth() &&
-                dateObj.getDate() === selectedDate.getDate()) {
-              el.classList.add('selected');
-            }
-
-            calendarGrid.appendChild(el);
-          })(d);
-        }
-
-        var totalCells = calendarGrid.children.length;
-        var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-        for (var d = 1; d <= remaining; d++) {
-          var el = document.createElement('div');
-          el.className = 'day other-month';
-          var dow = (totalCells + d - 1) % 7;
-          if (dow === 0) el.classList.add('sunday');
-          if (dow === 6) el.classList.add('saturday');
-          el.textContent = d;
-          calendarGrid.appendChild(el);
-        }
+      for (var i = firstDay - 1; i >= 0; i--) {
+        var d = prevLastDate - i;
+        var el = document.createElement('div');
+        el.className = 'day other-month';
+        var dow = (firstDay - 1 - i) % 7;
+        if (dow === 0) el.classList.add('sunday');
+        if (dow === 6) el.classList.add('saturday');
+        el.textContent = d;
+        calendarGrid.appendChild(el);
       }
 
-      document.getElementById('prevMonth').addEventListener('click', function() {
-        currentMonth--;
-        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-        renderCalendar();
-      });
+      for (var d = 1; d <= lastDate; d++) {
+        (function(d) {
+          var el = document.createElement('div');
+          el.className = 'day';
+          el.textContent = d;
+          var dateObj = new Date(currentYear, currentMonth, d);
+          var dow = dateObj.getDay();
+          if (dow === 0) el.classList.add('sunday');
+          if (dow === 6) el.classList.add('saturday');
 
-      document.getElementById('nextMonth').addEventListener('click', function() {
-        currentMonth++;
-        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-        renderCalendar();
-      });
+          var todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          if (dateObj < todayStart) {
+            el.classList.add('past');
+          } else {
+            el.addEventListener('click', function() {
+              document.querySelectorAll('.calendar-grid .day.selected').forEach(function(s) {
+                s.classList.remove('selected');
+              });
+              el.classList.add('selected');
+              selectedDate = dateObj;
+              var dayNames = ['일','월','화','수','목','금','토'];
+              selectedDateDisplay.textContent =
+                dateObj.getFullYear() + '년 ' + (dateObj.getMonth()+1) + '월 ' + d + '일 (' + dayNames[dow] + ')';
+            });
+          }
 
+          if (dateObj.getTime() === todayStart.getTime()) el.classList.add('today');
+
+          if (selectedDate &&
+              dateObj.getFullYear() === selectedDate.getFullYear() &&
+              dateObj.getMonth() === selectedDate.getMonth() &&
+              dateObj.getDate() === selectedDate.getDate()) {
+            el.classList.add('selected');
+          }
+
+          calendarGrid.appendChild(el);
+        })(d);
+      }
+
+      var totalCells = calendarGrid.children.length;
+      var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (var d = 1; d <= remaining; d++) {
+        var el = document.createElement('div');
+        el.className = 'day other-month';
+        var dow = (totalCells + d - 1) % 7;
+        if (dow === 0) el.classList.add('sunday');
+        if (dow === 6) el.classList.add('saturday');
+        el.textContent = d;
+        calendarGrid.appendChild(el);
+      }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', function() {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
       renderCalendar();
+    });
 
-      // ===== 예약 제출 & localStorage 저장 =====
-      document.getElementById('submitBtn').addEventListener('click', function() {
-        var clinicName = document.getElementById('clinicName').value.trim();
-        var timeEl = document.querySelector('input[name="visitTime"]:checked');
+    document.getElementById('nextMonth').addEventListener('click', function() {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    });
 
-        if (!clinicName) {
-          alert('치과명을 입력해 주세요.');
-          document.getElementById('clinicName').focus();
-          return;
-        }
-        if (!selectedDate) {
-          alert('방문 희망 날짜를 선택해 주세요.');
-          return;
-        }
-        if (!timeEl) {
-          alert('방문 희망 시간을 선택해 주세요.');
-          return;
-        }
+    renderCalendar();
 
+    // ===== 예약 제출 & Firestore 저장 =====
+    document.getElementById('submitBtn').addEventListener('click', async function() {
+      var clinicName = document.getElementById('clinicName').value.trim();
+      var timeEl = document.querySelector('input[name="visitTime"]:checked');
+
+      if (!clinicName) {
+        alert('치과명을 입력해 주세요.');
+        document.getElementById('clinicName').focus();
+        return;
+      }
+      if (!selectedDate) {
+        alert('방문 희망 날짜를 선택해 주세요.');
+        return;
+      }
+      if (!timeEl) {
+        alert('방문 희망 시간을 선택해 주세요.');
+        return;
+      }
+
+      var submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '예약 처리 중...';
+
+      try {
         var dayNames = ['일','월','화','수','목','금','토'];
         var dateStr = selectedDate.getFullYear() + '년 ' +
           (selectedDate.getMonth()+1) + '월 ' +
           selectedDate.getDate() + '일 (' +
           dayNames[selectedDate.getDay()] + ')';
 
-        // localStorage에 예약 저장
-        var reservation = {
-          id: Date.now(),
+        // Firestore에 예약 저장
+        await addDoc(collection(db, 'reservations'), {
           labName: LAB_NAME,
           clinicName: clinicName,
           date: dateStr,
@@ -1217,32 +1234,29 @@
           time: timeEl.value,
           createdAt: new Date().toISOString(),
           status: '대기'
-        };
+        });
 
-        var reservations = JSON.parse(localStorage.getItem('yt_reservations') || '[]');
-        reservations.push(reservation);
-        localStorage.setItem('yt_reservations', JSON.stringify(reservations));
-
-        // 기공소 목록에 등록 (객체 배열 형식)
-        var labs = JSON.parse(localStorage.getItem('yt_labs') || '[]');
-        // 하위호환: 문자열 배열이면 객체로 변환
-        if (labs.length > 0 && typeof labs[0] === 'string') {
-          labs = labs.map(function(n) { return { name: n, director: '' }; });
-        }
-        var exists = labs.some(function(l) { return l.name === LAB_NAME; });
-        if (!exists) {
-          labs.push({ name: LAB_NAME, director: DIRECTOR_NAME });
-          localStorage.setItem('yt_labs', JSON.stringify(labs));
+        // 기공소 목록에 등록
+        var labSnap = await getDocs(query(collection(db, 'labs'), where('name', '==', LAB_NAME)));
+        if (labSnap.empty) {
+          await addDoc(collection(db, 'labs'), {
+            name: LAB_NAME,
+            director: DIRECTOR_NAME
+          });
         }
 
         document.getElementById('resultClinic').textContent = clinicName;
         document.getElementById('resultDate').textContent = dateStr;
         document.getElementById('resultTime').textContent = timeEl.value;
 
-        document.getElementById('submitBtn').style.display = 'none';
+        submitBtn.style.display = 'none';
         document.getElementById('submitResult').style.display = 'block';
-      });
-    })();
+      } catch (err) {
+        alert('예약 중 오류가 발생했습니다. 다시 시도해 주세요.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '방문 예약 신청하기';
+      }
+    });
   </script>
 
 </body>
